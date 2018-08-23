@@ -4,15 +4,16 @@
   "icon": "icon.png",
   "commands": [
     {
-      "name": "Export for web",
-      "identifier": "web-export",
-      "script": "./web-export.js"
+      "name": "Export as text styles as HTML",
+      "shortcut": "ctrl shift t",
+      "identifier": "html-export",
+      "script": "./html-export.js"
     }
   ],
   "menu": {
     "title": "Typex",
     "items": [
-      "web-export"
+      "html-export"
     ]
   }
 }

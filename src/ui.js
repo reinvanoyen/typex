@@ -29,14 +29,14 @@ const ui = {
 
     return label;
   },
-  createField: (view, value) => {
+  createField: (view, value, width = FIELD_WIDTH, height = FIELD_HEIGHT) => {
 
-    let frame = NSMakeRect(LABEL_WIDTH, currentOffset, FIELD_WIDTH, FIELD_HEIGHT);
+    let frame = NSMakeRect(LABEL_WIDTH, currentOffset, width, height);
     let field = NSTextField.alloc().initWithFrame(frame);
     field.setStringValue(value);
 
     view.addSubview(field);
-    currentOffset = currentOffset + FIELD_HEIGHT + MARGIN;
+    currentOffset = currentOffset + height + MARGIN;
 
     return field;
   },

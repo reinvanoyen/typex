@@ -114,9 +114,17 @@ function createCssProps(textStyle, exportOpts = {}) {
 
 function createHtml(textStyles, exportOpts = {}) {
 
-  let output = '';
+  let output = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <title>Typex text styles</title>
+    </head>
+    <body style="padding: 0; margin: 0;">
+  `;
 
-  textStyles.forEach(textStyle => {
+  textStyles.forEach((textStyle, i) => {
 
     let uniqueId = createTextStyleId(textStyle);
 
@@ -126,13 +134,29 @@ function createHtml(textStyles, exportOpts = {}) {
       let inlineStyleString = createInlineStyleString(cssProps);
 
       output += `
-        <div>${textStyle.name}</div>
-        <div style="${inlineStyleString};">The quick brown fox jumps over the lazy dog</div>
+        <div style="box-shadow: 0 5px 15px #f0f0f0; padding: 25px 50px; border-bottom: 1px solid #ccc;">
+          <div style="font-family: Helvetica, Arial, Sans-Serif; font-size: 14px; margin-bottom: 15px;">
+            <span>${i+1}.</span>
+            <span>
+              ${textStyle.name}
+            </span>
+            <span style="color: #ccc;">
+              ${inlineStyleString}
+            </span>
+          </div>
+          <div style="${inlineStyleString};">${exportOpts.previewText}</div>
+        </div>
       `;
 
+      // Add the id to the stack of text styles we've already exported
       uniqueTextStyles[uniqueId] = true;
     }
   });
+
+  output += `
+    </body>
+    </html>
+   `;
 
   return output;
 }
@@ -155,14 +179,15 @@ function createExportSettingsWindow(context, cb) {
   let alert = NSAlert.alloc().init();
   let view = NSView.alloc().init();
 
-  /*
   let alertIconPath = context.plugin.urlForResourceNamed('icon.png').path();
   let alertIcon = NSImage.alloc().initByReferencingFile(alertIconPath);
   alert.setIcon(alertIcon);
-  */
 
   alert.setMessageText('Typex');
   alert.setInformativeText('Export your text styles to web');
+
+  let labelPreviewText = ui.createLabel(view, 'Preview text');
+  let fieldPreviewText = ui.createField(view, 'The quick brown fox jumps over the lazy dog', 200, 75);
 
   let labelScalingFactor = ui.createLabel(view, 'Scaling factor');
   let fieldScalingFactor = ui.createField(view, '1');
@@ -182,7 +207,8 @@ function createExportSettingsWindow(context, cb) {
 
     let exportOpts = {
       cssUnit: cssUnits[selectCssUnit.indexOfSelectedItem()],
-      scalingFactor: parseFloat(fieldScalingFactor.stringValue().replace(',', '.'))
+      scalingFactor: parseFloat(fieldScalingFactor.stringValue().replace(',', '.')),
+      previewText: fieldPreviewText.stringValue()
     };
 
     cb(exportOpts);
