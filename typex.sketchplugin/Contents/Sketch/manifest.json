@@ -1,0 +1,23 @@
+{
+  "compatibleVersion": 3,
+  "bundleVersion": 1,
+  "icon": "icon.png",
+  "commands": [
+    {
+      "name": "Export for web",
+      "identifier": "web-export",
+      "script": "web-export.js"
+    }
+  ],
+  "menu": {
+    "title": "Typex",
+    "items": [
+      "web-export"
+    ]
+  },
+  "version": "0.1.0",
+  "name": "typex",
+  "identifier": "typex",
+  "disableCocoaScriptPreprocessor": true,
+  "appcast": "https://raw.githubusercontent.com//master/.appcast.xml"
+}
