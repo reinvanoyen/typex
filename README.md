@@ -5,7 +5,7 @@
   <h3 align="center">Highly configurable text styles to web export plugin for Sketch</h3>
   <h4 align="center">Export your text styles to CSS classes, SASS mixins, ...</h4>
   <h4 align="center">Ready for the web with em and rem support...who uses px anyway?! 😶</h4>
-  <h5 align="center">To be fair, we still support px, obviously</h5>
+  <h5 align="center">To be fair, typeX actually still supports px...</h5>
 </p>
 
 # typeX (in development)
