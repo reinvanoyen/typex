@@ -15,6 +15,7 @@ typeX is a Sketch plugin which provides you with all the tools you need to expor
 ## Done
 * Order text styles by size
 * Export your text styles to a HTML fontbook (including text style name, CSS properties and preview text)
+* Export text styles to basic JSON
  
 ## Todo
 * Export CSS (as file OR copy-pastable directly) with each text style being a custom named class
