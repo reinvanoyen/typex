@@ -1,13 +1,13 @@
 const MARGIN = 10;
 
-const LABEL_WIDTH = 150;
+const LABEL_WIDTH = 200;
 const LABEL_HEIGHT = 22;
 
 const FIELD_WIDTH = 50;
 const FIELD_HEIGHT = 22;
 
 const SELECT_HEIGHT = 28;
-const SELECT_WIDTH = 50;
+const SELECT_WIDTH = 200;
 
 let currentOffset = 0;
 

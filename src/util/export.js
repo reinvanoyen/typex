@@ -1,6 +1,7 @@
 "use strict";
 
 import util from './util';
+import numberUtils from './number';
 
 const exportUtils = {
   sortTextStyles(textStyles) {
@@ -16,7 +17,7 @@ const exportUtils = {
 
     opts.cssUnit = opts.cssUnit || 'px';
     opts.scalingFactor = opts.scalingFactor || 1;
-    opts.decimalPlaces = opts.decimalPlaces || 2;
+    opts.maxDecimalPlaces = opts.maxDecimalPlaces || 2;
 
     let cssProps = {};
 
@@ -41,8 +42,8 @@ const exportUtils = {
       cssProps['font-weight'] = fontWeightMap[fontParts[1]];
     }
 
-    cssProps['font-size'] = parseFloat(opts.scalingFactor * textStyle.fontSize).toFixed(opts.decimalPlaces) + opts.cssUnit;
-    cssProps['letter-spacing'] = parseFloat(opts.scalingFactor * textStyle.letterSpacing).toFixed(opts.decimalPlaces) + opts.cssUnit;
+    cssProps['font-size'] = numberUtils.parseFloatMaxDecimal(opts.scalingFactor * textStyle.fontSize, opts.maxDecimalPlaces)+opts.cssUnit;
+    cssProps['letter-spacing'] = numberUtils.parseFloatMaxDecimal(opts.scalingFactor * textStyle.letterSpacing, opts.maxDecimalPlaces)+opts.cssUnit;
 
     if (textStyle.textTransform === 1) {
       cssProps['text-transform'] = 'uppercase';
@@ -53,7 +54,7 @@ const exportUtils = {
     }
 
     if (textStyle.lineHeight) {
-      cssProps['line-height'] = parseFloat(1 + (textStyle.lineHeight - textStyle.fontSize) / textStyle.lineHeight).toFixed(opts.decimalPlaces);
+      cssProps['line-height'] = numberUtils.parseFloatMaxDecimal(1 + (textStyle.lineHeight - textStyle.fontSize) / textStyle.lineHeight, opts.maxDecimalPlaces);
     }
 
     return cssProps;

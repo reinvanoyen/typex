@@ -14,13 +14,27 @@
       "shortcut": "ctrl shift j",
       "identifier": "json-export",
       "script": "json-export.js"
+    },
+    {
+      "name": "Export text styles as CSS classes",
+      "shortcut": "ctrl shift c",
+      "identifier": "css-export",
+      "script": "css-export.js"
+    },
+    {
+      "name": "Export text styles as SASS mixins",
+      "shortcut": "ctrl shift s",
+      "identifier": "sass-mixins-export",
+      "script": "sass-mixins-export.js"
     }
   ],
   "menu": {
     "title": "Typex",
     "items": [
       "html-fontbook-export",
-      "json-export"
+      "json-export",
+      "css-export",
+      "sass-mixins-export"
     ]
   },
   "version": "0.1.0",

@@ -130,12 +130,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 var MARGIN = 10;
-var LABEL_WIDTH = 150;
+var LABEL_WIDTH = 200;
 var LABEL_HEIGHT = 22;
 var FIELD_WIDTH = 50;
 var FIELD_HEIGHT = 22;
 var SELECT_HEIGHT = 28;
-var SELECT_WIDTH = 50;
+var SELECT_WIDTH = 200;
 var currentOffset = 0;
 var ui = {
   createLabel: function createLabel(view, text) {
@@ -190,6 +190,8 @@ var ui = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util */ "./src/util/util.js");
+/* harmony import */ var _number__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./number */ "./src/util/number.js");
+
 
 
 
@@ -205,7 +207,7 @@ var exportUtils = {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     opts.cssUnit = opts.cssUnit || 'px';
     opts.scalingFactor = opts.scalingFactor || 1;
-    opts.decimalPlaces = opts.decimalPlaces || 2;
+    opts.maxDecimalPlaces = opts.maxDecimalPlaces || 2;
     var cssProps = {};
     cssProps['font-family'] = textStyle.fontFamily;
     cssProps['font-weight'] = 400;
@@ -226,8 +228,8 @@ var exportUtils = {
       cssProps['font-weight'] = fontWeightMap[fontParts[1]];
     }
 
-    cssProps['font-size'] = parseFloat(opts.scalingFactor * textStyle.fontSize).toFixed(opts.decimalPlaces) + opts.cssUnit;
-    cssProps['letter-spacing'] = parseFloat(opts.scalingFactor * textStyle.letterSpacing).toFixed(opts.decimalPlaces) + opts.cssUnit;
+    cssProps['font-size'] = _number__WEBPACK_IMPORTED_MODULE_1__["default"].parseFloatMaxDecimal(opts.scalingFactor * textStyle.fontSize, opts.maxDecimalPlaces) + opts.cssUnit;
+    cssProps['letter-spacing'] = _number__WEBPACK_IMPORTED_MODULE_1__["default"].parseFloatMaxDecimal(opts.scalingFactor * textStyle.letterSpacing, opts.maxDecimalPlaces) + opts.cssUnit;
 
     if (textStyle.textTransform === 1) {
       cssProps['text-transform'] = 'uppercase';
@@ -238,7 +240,7 @@ var exportUtils = {
     }
 
     if (textStyle.lineHeight) {
-      cssProps['line-height'] = parseFloat(1 + (textStyle.lineHeight - textStyle.fontSize) / textStyle.lineHeight).toFixed(opts.decimalPlaces);
+      cssProps['line-height'] = _number__WEBPACK_IMPORTED_MODULE_1__["default"].parseFloatMaxDecimal(1 + (textStyle.lineHeight - textStyle.fontSize) / textStyle.lineHeight, opts.maxDecimalPlaces);
     }
 
     return cssProps;
@@ -272,6 +274,26 @@ var exportUtils = {
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (exportUtils);
+
+/***/ }),
+
+/***/ "./src/util/number.js":
+/*!****************************!*\
+  !*** ./src/util/number.js ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+var number = {
+  parseFloatMaxDecimal: function parseFloatMaxDecimal(number, maxDecimalPlaces) {
+    return Number(number.toFixed(maxDecimalPlaces).replace(/[.,]00$/, ''));
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = (number);
 
 /***/ }),
 
@@ -359,6 +381,8 @@ var uiUtils = {
     alert.setInformativeText('Export your text styles to web');
     var labelPreviewText = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Preview text');
     var fieldPreviewText = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, 'The quick brown fox jumps over the lazy dog', 200, 75);
+    var labelMaxDecimalPlaces = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Maximum decimal places');
+    var fieldMaxDecimalPlaces = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, '2');
     var labelScalingFactor = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Scaling factor');
     var fieldScalingFactor = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, '1');
     var labelCssUnit = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'CSS unit');
@@ -373,7 +397,46 @@ var uiUtils = {
       var exportOpts = {
         cssUnit: cssUnits[selectCssUnit.indexOfSelectedItem()],
         scalingFactor: parseFloat(fieldScalingFactor.stringValue().replace(',', '.')),
+        maxDecimalPlaces: parseInt(fieldMaxDecimalPlaces.stringValue()),
         previewText: fieldPreviewText.stringValue()
+      };
+      cb(exportOpts);
+    }
+  },
+  createSassExportSettingsWindow: function createSassExportSettingsWindow(context, cb) {
+    // @TODO create refactored function (look a NSGridView for creating the form)
+    var cssUnits = ['px', 'em', 'rem'];
+    var mixinNamingConventions = ['Numeric', 'Text style name'];
+    var alert = NSAlert.alloc().init();
+    var view = NSView.alloc().init();
+    var alertIconPath = context.plugin.urlForResourceNamed('icon.png').path();
+    var alertIcon = NSImage.alloc().initByReferencingFile(alertIconPath);
+    alert.setIcon(alertIcon);
+    alert.setMessageText('SASS export');
+    alert.setInformativeText('Export your text styles to SASS mixins');
+    var labelMixinNamingPrefix = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Naming prefix');
+    var fieldMixinNamingPrefix = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, 'type');
+    var labelMixinNamingConvention = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Mixin naming convention');
+    var selectMixinNamingConvention = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSelect(view, mixinNamingConventions);
+    var labelMaxDecimalPlaces = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Maximum decimal places');
+    var fieldMaxDecimalPlaces = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, '2');
+    var labelScalingFactor = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Scaling factor');
+    var fieldScalingFactor = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, '1');
+    var labelCssUnit = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'CSS unit');
+    var selectCssUnit = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSelect(view, cssUnits);
+    var btnExport = alert.addButtonWithTitle('Export');
+    var btnCancel = alert.addButtonWithTitle('Cancel');
+    view.frame = NSMakeRect(0, 0, 400, _ui__WEBPACK_IMPORTED_MODULE_0__["default"].getCurrentOffset());
+    alert.accessoryView = view;
+    var responseCode = alert.runModal();
+
+    if (responseCode === 1000) {
+      var exportOpts = {
+        cssUnit: cssUnits[selectCssUnit.indexOfSelectedItem()],
+        scalingFactor: parseFloat(fieldScalingFactor.stringValue().replace(',', '.')),
+        maxDecimalPlaces: parseInt(fieldMaxDecimalPlaces.stringValue()),
+        namingConvention: mixinNamingConventions[selectMixinNamingConvention.indexOfSelectedItem()],
+        namingPrefix: fieldMixinNamingPrefix.stringValue()
       };
       cb(exportOpts);
     }

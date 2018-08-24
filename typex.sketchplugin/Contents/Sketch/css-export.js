@@ -86,36 +86,52 @@ var exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/html-fontbook-export.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/css-export.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/html-fontbook-export.js":
-/*!*************************************!*\
-  !*** ./src/html-fontbook-export.js ***!
-  \*************************************/
+/***/ "./src/css-export.js":
+/*!***************************!*\
+  !*** ./src/css-export.js ***!
+  \***************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_ui__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/ui */ "./src/util/ui.js");
-/* harmony import */ var _util_export__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/export */ "./src/util/export.js");
-/* harmony import */ var _util_sketch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/sketch */ "./src/util/sketch.js");
+/* harmony import */ var _util_string__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/string */ "./src/util/string.js");
+/* harmony import */ var _util_export__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/export */ "./src/util/export.js");
+/* harmony import */ var _util_sketch__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util/sketch */ "./src/util/sketch.js");
+
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
-  // Open the settings window
-  _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createHtmlFontbookExportSettingsWindow(context, function (opts) {
-    // Get the text styles from the Sketch document
-    var textStyles = _util_sketch__WEBPACK_IMPORTED_MODULE_2__["default"].getTextStyles(context); // Create a HTML fontbook with these styles
-
-    var html = _util_export__WEBPACK_IMPORTED_MODULE_1__["default"].createHtmlFontbook(textStyles, opts); // Ask the user to save the file
-
-    _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSavePanel('typex-fontbook.html', html);
+  // Get the text styles from the Sketch document
+  var textStyles = _util_sketch__WEBPACK_IMPORTED_MODULE_3__["default"].getTextStyles(context);
+  var css = {};
+  textStyles.forEach(function (textStyle) {
+    css[_util_string__WEBPACK_IMPORTED_MODULE_1__["default"].slugify(textStyle.name)] = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].createCssProps(textStyle);
   });
+  var output = '';
+  var i = 0;
+
+  for (var identifier in css) {
+    output += (i !== 0 ? "\n" : '') + '.type-' + identifier + "\n";
+    output += '{' + "\n";
+
+    for (var prop in css[identifier]) {
+      output += "\t" + prop + ': ' + css[identifier][prop] + ';' + "\n";
+    }
+
+    output += '}' + "\n";
+    i++;
+  } // Ask the user to save the file
+
+
+  _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSavePanel('typex-stylesheet.css', output);
 });
 ;
 
@@ -344,6 +360,41 @@ var sketch = {
 
 /***/ }),
 
+/***/ "./src/util/string.js":
+/*!****************************!*\
+  !*** ./src/util/string.js ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+var string = {
+  slugify: function slugify(str) {
+    str = str.replace(/^\s+|\s+$/g, ''); // trim
+
+    str = str.toLowerCase(); // remove accents, swap ñ for n, etc
+
+    var from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
+    var to = 'aaaaeeeeiiiioooouuuunc------';
+
+    for (var i = 0, l = from.length; i < l; i++) {
+      str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+    }
+
+    str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+    .replace(/\s+/g, '-') // collapse whitespace and replace by -
+    .replace(/-+/g, '-') // collapse dashes
+    ;
+    return str;
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = (string);
+
+/***/ }),
+
 /***/ "./src/util/ui.js":
 /*!************************!*\
   !*** ./src/util/ui.js ***!
@@ -483,4 +534,4 @@ var util = {
 }
 that['onRun'] = __skpm_run.bind(this, 'default')
 
-//# sourceMappingURL=html-fontbook-export.js.map
+//# sourceMappingURL=css-export.js.map
