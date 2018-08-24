@@ -9,6 +9,7 @@ export default function(context) {
   uiUtils.createSassExportSettingsWindow(context, (opts) => {
 
     opts.namingPrefix = opts.namingPrefix || 'type';
+    opts.namingConvention = opts.namingConvention || 'Numeric';
 
     // Get the text styles from the Sketch document
     let textStyles = sketchUtils.getTextStyles(context);

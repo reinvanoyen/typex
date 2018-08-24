@@ -111,7 +111,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
   // Open the settings window
   _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSassExportSettingsWindow(context, function (opts) {
-    opts.namingPrefix = opts.namingPrefix || 'type'; // Get the text styles from the Sketch document
+    opts.namingPrefix = opts.namingPrefix || 'type';
+    opts.namingConvention = opts.namingConvention || 'Numeric'; // Get the text styles from the Sketch document
 
     var textStyles = _util_sketch__WEBPACK_IMPORTED_MODULE_3__["default"].getTextStyles(context);
     var sass = {};
@@ -434,8 +435,8 @@ var uiUtils = {
     var alertIconPath = context.plugin.urlForResourceNamed('icon.png').path();
     var alertIcon = NSImage.alloc().initByReferencingFile(alertIconPath);
     alert.setIcon(alertIcon);
-    alert.setMessageText('Typex');
-    alert.setInformativeText('Export your text styles to web');
+    alert.setMessageText('Create HTML fontbook');
+    alert.setInformativeText('Create a handy HTML fontbook from your text styles');
     var labelPreviewText = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Preview text');
     var fieldPreviewText = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, 'The quick brown fox jumps over the lazy dog', 200, 75);
     var labelMaxDecimalPlaces = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Maximum decimal places');

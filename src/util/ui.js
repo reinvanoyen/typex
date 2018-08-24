@@ -30,8 +30,8 @@ const uiUtils = {
     let alertIcon = NSImage.alloc().initByReferencingFile(alertIconPath);
     alert.setIcon(alertIcon);
 
-    alert.setMessageText('Typex');
-    alert.setInformativeText('Export your text styles to web');
+    alert.setMessageText('Create HTML fontbook');
+    alert.setInformativeText('Create a handy HTML fontbook from your text styles');
 
     let labelPreviewText = ui.createLabel(view, 'Preview text');
     let fieldPreviewText = ui.createField(view, 'The quick brown fox jumps over the lazy dog', 200, 75);

@@ -429,8 +429,8 @@ var uiUtils = {
     var alertIconPath = context.plugin.urlForResourceNamed('icon.png').path();
     var alertIcon = NSImage.alloc().initByReferencingFile(alertIconPath);
     alert.setIcon(alertIcon);
-    alert.setMessageText('Typex');
-    alert.setInformativeText('Export your text styles to web');
+    alert.setMessageText('Create HTML fontbook');
+    alert.setInformativeText('Create a handy HTML fontbook from your text styles');
     var labelPreviewText = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Preview text');
     var fieldPreviewText = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, 'The quick brown fox jumps over the lazy dog', 200, 75);
     var labelMaxDecimalPlaces = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Maximum decimal places');
