@@ -4,16 +4,23 @@
   "icon": "icon.png",
   "commands": [
     {
-      "name": "Export as text styles as HTML",
-      "shortcut": "ctrl shift t",
-      "identifier": "html-export",
-      "script": "./html-export.js"
+      "name": "Export text styles as HTML fontbook",
+      "shortcut": "ctrl shift f",
+      "identifier": "html-fontbook-export",
+      "script": "./html-fontbook-export.js"
+    },
+    {
+      "name": "Export text styles as JSON",
+      "shortcut": "ctrl shift j",
+      "identifier": "json-export",
+      "script": "./json-export.js"
     }
   ],
   "menu": {
     "title": "Typex",
     "items": [
-      "html-export"
+      "html-fontbook-export",
+      "json-export"
     ]
   }
 }
