@@ -1,11 +1,12 @@
 {
   "name": "typex",
-  "version": "0.1.1-12",
+  "version": "0.1.1-13",
   "description": "Highly configurable text styles to web (css, sass, html, json, ...) export plugin",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/reinvanoyen/typex"
-  },  "engines": {
+  },
+  "engines": {
     "sketch": ">=3.0"
   },
   "skpm": {
