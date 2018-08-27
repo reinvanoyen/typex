@@ -1,8 +1,6 @@
 "use strict";
 
-import ui from '../ui';
-
-const uiUtils = {
+const ui = {
   createSavePanel(defaultFileName, contents) {
 
     let save = NSSavePanel.savePanel();
@@ -19,107 +17,120 @@ const uiUtils = {
       file.writeToFile_atomically_encoding_error(path, true, NSUTF8StringEncoding, null);
     }
   },
-  createHtmlFontbookExportSettingsWindow(context, cb) { // @TODO create refactored function (look a NSGridView for creating the form)
+  createLabel: (text) => {
 
-    let cssUnits = ['px', 'em', 'rem'];
+    let label = NSTextField.alloc().init();
 
-    let alert = NSAlert.alloc().init();
-    let view = NSView.alloc().init();
+    label.setStringValue(text);
+    label.setFont(NSFont.boldSystemFontOfSize(12));
+    label.setBezeled(false);
+    label.setDrawsBackground(false);
+    label.setEditable(false);
+    label.setSelectable(false);
 
-    let alertIconPath = context.plugin.urlForResourceNamed('icon.png').path();
-    let alertIcon = NSImage.alloc().initByReferencingFile(alertIconPath);
-    alert.setIcon(alertIcon);
-
-    alert.setMessageText('Create HTML fontbook');
-    alert.setInformativeText('Create a handy HTML fontbook from your text styles');
-
-    let labelPreviewText = ui.createLabel(view, 'Preview text');
-    let fieldPreviewText = ui.createField(view, 'The quick brown fox jumps over the lazy dog', 200, 75);
-
-    let labelMaxDecimalPlaces = ui.createLabel(view, 'Maximum decimal places');
-    let fieldMaxDecimalPlaces = ui.createField(view, '2');
-
-    let labelScalingFactor = ui.createLabel(view, 'Scaling factor');
-    let fieldScalingFactor = ui.createField(view, '1');
-
-    let labelCssUnit = ui.createLabel(view, 'CSS unit');
-    let selectCssUnit = ui.createSelect(view, cssUnits);
-
-    let btnExport = alert.addButtonWithTitle('Export');
-    let btnCancel = alert.addButtonWithTitle('Cancel');
-
-    view.frame = NSMakeRect(0, 0, 400, ui.getCurrentOffset());
-    alert.accessoryView = view;
-
-    let responseCode = alert.runModal();
-
-    if (responseCode === 1000) {
-
-      let exportOpts = {
-        cssUnit: cssUnits[selectCssUnit.indexOfSelectedItem()],
-        scalingFactor: parseFloat(fieldScalingFactor.stringValue().replace(',', '.')),
-        maxDecimalPlaces: parseInt(fieldMaxDecimalPlaces.stringValue()),
-        previewText: fieldPreviewText.stringValue()
-      };
-
-      cb(exportOpts);
-    }
+    return label;
   },
-  createSassExportSettingsWindow(context, cb) { // @TODO create refactored function (look a NSGridView for creating the form)
+  createTextField(value) {
 
-    let cssUnits = ['px', 'em', 'rem'];
+    let field = NSTextField.alloc().init();
 
-    let mixinNamingConventions = [
-      'Numeric',
-      'Text style name'
-    ];
+    field.setStringValue(value);
 
-    let alert = NSAlert.alloc().init();
-    let view = NSView.alloc().init();
+    return field;
+  },
+  createSelect: (options) => {
 
-    let alertIconPath = context.plugin.urlForResourceNamed('icon.png').path();
-    let alertIcon = NSImage.alloc().initByReferencingFile(alertIconPath);
-    alert.setIcon(alertIcon);
+    let comboBox = NSComboBox.alloc().init();
 
-    alert.setMessageText('SASS export');
-    alert.setInformativeText('Export your text styles to SASS mixins');
+    comboBox.addItemsWithObjectValues(options);
+    comboBox.selectItemAtIndex(0);
+    comboBox.setNumberOfVisibleItems(16);
+    comboBox.setCompletes(1);
 
-    let labelMixinNamingPrefix = ui.createLabel(view, 'Naming prefix');
-    let fieldMixinNamingPrefix = ui.createField(view, 'type');
+    return comboBox;
+  },
+  createSettingsDialog(context, opts = {}, components, cb) {
 
-    let labelMixinNamingConvention = ui.createLabel(view, 'Mixin naming convention');
-    let selectMixinNamingConvention = ui.createSelect(view, mixinNamingConventions);
+    opts.title = opts.title || 'Alert';
+    opts.informativeText = opts.informativeText || '';
+    opts.cancelBtnText = opts.cancelBtnText || 'Cancel';
+    opts.confirmBtnText = opts.confirmBtnText || 'Ok';
 
-    let labelMaxDecimalPlaces = ui.createLabel(view, 'Maximum decimal places');
-    let fieldMaxDecimalPlaces = ui.createField(view, '2');
+    let dialog = NSAlert.alloc().init();
+    let dialogIconPath = context.plugin.urlForResourceNamed('icon.png').path();
+    let dialogIcon = NSImage.alloc().initByReferencingFile(dialogIconPath);
+    dialog.setIcon(dialogIcon);
+    dialog.setMessageText(opts.title);
+    dialog.setInformativeText(opts.informativeText);
 
-    let labelScalingFactor = ui.createLabel(view, 'Scaling factor');
-    let fieldScalingFactor = ui.createField(view, '1');
+    let btnConfirm = dialog.addButtonWithTitle(opts.confirmBtnText);
+    let btnCancel = dialog.addButtonWithTitle(opts.cancelBtnText);
 
-    let labelCssUnit = ui.createLabel(view, 'CSS unit');
-    let selectCssUnit = ui.createSelect(view, cssUnits);
+    // Create grid view
+    let gridView = NSGridView.alloc().init();
 
-    let btnExport = alert.addButtonWithTitle('Export');
-    let btnCancel = alert.addButtonWithTitle('Cancel');
+    // Create object to hold all inputs
+    let inputs = {};
+    let height = 0;
 
-    view.frame = NSMakeRect(0, 0, 400, ui.getCurrentOffset());
-    alert.accessoryView = view;
+    // Loop each component
+    components.forEach(c => {
 
-    let responseCode = alert.runModal();
+      let label, field;
 
+      switch (c.type) {
+
+        case 'text':
+
+          label = ui.createLabel(c.label);
+          field = ui.createTextField(c.value);
+          height += 22;
+
+          break;
+
+        case 'select':
+
+          label = ui.createLabel(c.label);
+          field = ui.createSelect(c.options);
+          height += 28;
+
+          break;
+      }
+
+      inputs[c.id] = field;
+      gridView.addRowWithViews([label, field]);
+    });
+
+    // Set grid view as view of dialog
+    dialog.accessoryView = gridView;
+
+    gridView.columnSpacing = 30;
+    gridView.frame = NSMakeRect(0, 0, 400, height);
+
+    // Open the dialog and store the response code
+    let responseCode = dialog.runModal();
+
+    // The dialog is being 'submitted'
     if (responseCode === 1000) {
 
-      let exportOpts = {
-        cssUnit: cssUnits[selectCssUnit.indexOfSelectedItem()],
-        scalingFactor: parseFloat(fieldScalingFactor.stringValue().replace(',', '.')),
-        maxDecimalPlaces: parseInt(fieldMaxDecimalPlaces.stringValue()),
-        namingConvention: mixinNamingConventions[selectMixinNamingConvention.indexOfSelectedItem()],
-        namingPrefix: fieldMixinNamingPrefix.stringValue(),
-      };
+      let data = {};
 
-      cb(exportOpts);
+      components.forEach(c => {
+
+        switch (c.type) {
+          case 'text':
+            data[c.id] = inputs[c.id].stringValue();
+            break;
+          case 'select':
+            data[c.id] = c.options[inputs[c.id].indexOfSelectedItem()];
+        }
+      });
+
+      cb(data);
     }
+
+    return dialog;
   }
 };
 
-export default uiUtils;
+export default ui;

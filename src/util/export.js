@@ -59,6 +59,16 @@ const exportUtils = {
 
     return cssProps;
   },
+  createStyleBlock(cssProps) {
+
+    let output = '';
+
+    for (let prop in cssProps) {
+      output += "\t"+prop+': '+cssProps[prop]+';'+"\n";
+    }
+
+    return output;
+  },
   createInlineStyleString(cssProps) {
 
     let styleString = '';
@@ -86,6 +96,7 @@ const exportUtils = {
     textStyles.forEach((textStyle, i) => {
 
       let textStyleId = util.createTextStyleId(textStyle);
+      let textStyleName = opts.textStyleNamingPrefix + ' ' + (opts.textStyleNamingConvention === 'Numeric' ? i+1 : textStyle.name);
 
       if (! exportedTextStyles[textStyleId]) {
 
@@ -97,7 +108,7 @@ const exportUtils = {
             <div style="font-family: Helvetica, Arial, Sans-Serif; font-size: 14px; margin-bottom: 15px;">
               <span>${i+1}.</span>
               <span>
-                ${textStyle.name}
+                ${textStyleName}
               </span>
               <span style="color: #ccc;">
                 ${inlineStyleString}

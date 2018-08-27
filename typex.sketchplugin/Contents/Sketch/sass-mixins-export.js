@@ -109,97 +109,59 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
-  // Open the settings window
-  _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSassExportSettingsWindow(context, function (opts) {
-    opts.namingPrefix = opts.namingPrefix || 'type';
-    opts.namingConvention = opts.namingConvention || 'Numeric'; // Get the text styles from the Sketch document
+  _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSettingsDialog(context, {
+    title: 'SASS mixins export',
+    informativeText: 'Export each text style as a SASS mixin'
+  }, [{
+    type: 'select',
+    id: 'cssUnit',
+    options: ['px', 'em', 'rem'],
+    label: 'Css unit'
+  }, {
+    type: 'text',
+    id: 'scalingFactor',
+    value: 1,
+    label: 'Size scaling factor'
+  }, {
+    type: 'text',
+    id: 'maxDecimalPlaces',
+    value: 2,
+    label: 'Maximal decimal places'
+  }, {
+    type: 'text',
+    id: 'mixinNamingPrefix',
+    value: 'type',
+    label: 'Mixin naming prefix'
+  }, {
+    type: 'select',
+    id: 'mixinNamingConvention',
+    options: ['Numeric', 'Text style name'],
+    label: 'Mixin naming convention'
+  }], function (data) {
+    data.mixinNamingConvention = data.mixinNamingConvention || 'Numeric'; // Get the text styles from the Sketch document
 
     var textStyles = _util_sketch__WEBPACK_IMPORTED_MODULE_3__["default"].getTextStyles(context);
+    textStyles = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].sortTextStyles(textStyles);
     var sass = {};
     textStyles.forEach(function (textStyle) {
-      sass[_util_string__WEBPACK_IMPORTED_MODULE_1__["default"].slugify(textStyle.name)] = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].createCssProps(textStyle, opts);
+      sass[_util_string__WEBPACK_IMPORTED_MODULE_1__["default"].slugify(textStyle.name)] = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].createCssProps(textStyle, data);
     });
     var output = '';
     var i = 0;
 
     for (var identifier in sass) {
-      var mixinName = opts.namingPrefix + '-' + (opts.namingConvention === 'Numeric' ? i + 1 : identifier);
+      var mixinName = data.mixinNamingPrefix + '-' + (data.mixinNamingConvention === 'Numeric' ? i + 1 : identifier);
       output += (i !== 0 ? "\n" : '') + '@mixin ' + mixinName + "\n";
       output += '{' + "\n";
-
-      for (var prop in sass[identifier]) {
-        output += "\t" + prop + ': ' + sass[identifier][prop] + ';' + "\n";
-      }
-
+      output += _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].createStyleBlock(sass[identifier]);
       output += '}' + "\n";
       i++;
-    } // Ask the user to save the file
-
+    }
 
     _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSavePanel('typex-mixins.scss', output);
   });
 });
 ;
-
-/***/ }),
-
-/***/ "./src/ui.js":
-/*!*******************!*\
-  !*** ./src/ui.js ***!
-  \*******************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-var MARGIN = 10;
-var LABEL_WIDTH = 200;
-var LABEL_HEIGHT = 22;
-var FIELD_WIDTH = 50;
-var FIELD_HEIGHT = 22;
-var SELECT_HEIGHT = 28;
-var SELECT_WIDTH = 200;
-var currentOffset = 0;
-var ui = {
-  createLabel: function createLabel(view, text) {
-    var frame = NSMakeRect(0, currentOffset, LABEL_WIDTH, LABEL_HEIGHT);
-    var label = NSTextField.alloc().initWithFrame(frame);
-    label.setStringValue(text);
-    label.setFont(NSFont.boldSystemFontOfSize(12));
-    label.setBezeled(false);
-    label.setDrawsBackground(false);
-    label.setEditable(false);
-    label.setSelectable(false);
-    view.addSubview(label); // currentOffset = currentOffset + LABEL_HEIGHT;
-
-    return label;
-  },
-  createField: function createField(view, value) {
-    var width = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : FIELD_WIDTH;
-    var height = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : FIELD_HEIGHT;
-    var frame = NSMakeRect(LABEL_WIDTH, currentOffset, width, height);
-    var field = NSTextField.alloc().initWithFrame(frame);
-    field.setStringValue(value);
-    view.addSubview(field);
-    currentOffset = currentOffset + height + MARGIN;
-    return field;
-  },
-  createSelect: function createSelect(view, options) {
-    var frame = NSMakeRect(LABEL_WIDTH, currentOffset, SELECT_WIDTH, SELECT_HEIGHT);
-    var comboBox = NSComboBox.alloc().initWithFrame(frame);
-    comboBox.addItemsWithObjectValues(options);
-    comboBox.selectItemAtIndex(0);
-    comboBox.setNumberOfVisibleItems(16);
-    comboBox.setCompletes(1);
-    view.addSubview(comboBox);
-    currentOffset = currentOffset + SELECT_HEIGHT + MARGIN;
-    return comboBox;
-  },
-  getCurrentOffset: function getCurrentOffset() {
-    return currentOffset;
-  }
-};
-/* harmony default export */ __webpack_exports__["default"] = (ui);
 
 /***/ }),
 
@@ -268,6 +230,15 @@ var exportUtils = {
 
     return cssProps;
   },
+  createStyleBlock: function createStyleBlock(cssProps) {
+    var output = '';
+
+    for (var prop in cssProps) {
+      output += "\t" + prop + ': ' + cssProps[prop] + ';' + "\n";
+    }
+
+    return output;
+  },
   createInlineStyleString: function createInlineStyleString(cssProps) {
     var styleString = '';
 
@@ -283,11 +254,12 @@ var exportUtils = {
     var output = "\n      <!DOCTYPE html>\n      <html lang=\"en\">\n      <head>\n        <meta charset=\"utf-8\">\n        <title>Typex text styles</title>\n      </head>\n      <body style=\"padding: 0; margin: 0;\">\n    ";
     textStyles.forEach(function (textStyle, i) {
       var textStyleId = _util__WEBPACK_IMPORTED_MODULE_0__["default"].createTextStyleId(textStyle);
+      var textStyleName = opts.textStyleNamingPrefix + ' ' + (opts.textStyleNamingConvention === 'Numeric' ? i + 1 : textStyle.name);
 
       if (!exportedTextStyles[textStyleId]) {
         var cssProps = exportUtils.createCssProps(textStyle, opts);
         var inlineStyleString = exportUtils.createInlineStyleString(cssProps);
-        output += "\n          <div style=\"box-shadow: 0 5px 15px #f0f0f0; padding: 25px 50px; border-bottom: 1px solid #ccc;\">\n            <div style=\"font-family: Helvetica, Arial, Sans-Serif; font-size: 14px; margin-bottom: 15px;\">\n              <span>".concat(i + 1, ".</span>\n              <span>\n                ").concat(textStyle.name, "\n              </span>\n              <span style=\"color: #ccc;\">\n                ").concat(inlineStyleString, "\n              </span>\n            </div>\n            <div style=\"").concat(inlineStyleString, ";\">").concat(opts.previewText, "</div>\n          </div>\n        "); // Add the id to the stack of text styles we've already exported
+        output += "\n          <div style=\"box-shadow: 0 5px 15px #f0f0f0; padding: 25px 50px; border-bottom: 1px solid #ccc;\">\n            <div style=\"font-family: Helvetica, Arial, Sans-Serif; font-size: 14px; margin-bottom: 15px;\">\n              <span>".concat(i + 1, ".</span>\n              <span>\n                ").concat(textStyleName, "\n              </span>\n              <span style=\"color: #ccc;\">\n                ").concat(inlineStyleString, "\n              </span>\n            </div>\n            <div style=\"").concat(inlineStyleString, ";\">").concat(opts.previewText, "</div>\n          </div>\n        "); // Add the id to the stack of text styles we've already exported
 
         exportedTextStyles[textStyleId] = true;
       }
@@ -410,11 +382,9 @@ var string = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _ui__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../ui */ "./src/ui.js");
 
 
-
-var uiUtils = {
+var ui = {
   createSavePanel: function createSavePanel(defaultFileName, contents) {
     var save = NSSavePanel.savePanel();
     save.setNameFieldStringValue(defaultFileName);
@@ -427,80 +397,97 @@ var uiUtils = {
       file.writeToFile_atomically_encoding_error(path, true, NSUTF8StringEncoding, null);
     }
   },
-  createHtmlFontbookExportSettingsWindow: function createHtmlFontbookExportSettingsWindow(context, cb) {
-    // @TODO create refactored function (look a NSGridView for creating the form)
-    var cssUnits = ['px', 'em', 'rem'];
-    var alert = NSAlert.alloc().init();
-    var view = NSView.alloc().init();
-    var alertIconPath = context.plugin.urlForResourceNamed('icon.png').path();
-    var alertIcon = NSImage.alloc().initByReferencingFile(alertIconPath);
-    alert.setIcon(alertIcon);
-    alert.setMessageText('Create HTML fontbook');
-    alert.setInformativeText('Create a handy HTML fontbook from your text styles');
-    var labelPreviewText = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Preview text');
-    var fieldPreviewText = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, 'The quick brown fox jumps over the lazy dog', 200, 75);
-    var labelMaxDecimalPlaces = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Maximum decimal places');
-    var fieldMaxDecimalPlaces = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, '2');
-    var labelScalingFactor = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Scaling factor');
-    var fieldScalingFactor = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, '1');
-    var labelCssUnit = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'CSS unit');
-    var selectCssUnit = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSelect(view, cssUnits);
-    var btnExport = alert.addButtonWithTitle('Export');
-    var btnCancel = alert.addButtonWithTitle('Cancel');
-    view.frame = NSMakeRect(0, 0, 400, _ui__WEBPACK_IMPORTED_MODULE_0__["default"].getCurrentOffset());
-    alert.accessoryView = view;
-    var responseCode = alert.runModal();
-
-    if (responseCode === 1000) {
-      var exportOpts = {
-        cssUnit: cssUnits[selectCssUnit.indexOfSelectedItem()],
-        scalingFactor: parseFloat(fieldScalingFactor.stringValue().replace(',', '.')),
-        maxDecimalPlaces: parseInt(fieldMaxDecimalPlaces.stringValue()),
-        previewText: fieldPreviewText.stringValue()
-      };
-      cb(exportOpts);
-    }
+  createLabel: function createLabel(text) {
+    var label = NSTextField.alloc().init();
+    label.setStringValue(text);
+    label.setFont(NSFont.boldSystemFontOfSize(12));
+    label.setBezeled(false);
+    label.setDrawsBackground(false);
+    label.setEditable(false);
+    label.setSelectable(false);
+    return label;
   },
-  createSassExportSettingsWindow: function createSassExportSettingsWindow(context, cb) {
-    // @TODO create refactored function (look a NSGridView for creating the form)
-    var cssUnits = ['px', 'em', 'rem'];
-    var mixinNamingConventions = ['Numeric', 'Text style name'];
-    var alert = NSAlert.alloc().init();
-    var view = NSView.alloc().init();
-    var alertIconPath = context.plugin.urlForResourceNamed('icon.png').path();
-    var alertIcon = NSImage.alloc().initByReferencingFile(alertIconPath);
-    alert.setIcon(alertIcon);
-    alert.setMessageText('SASS export');
-    alert.setInformativeText('Export your text styles to SASS mixins');
-    var labelMixinNamingPrefix = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Naming prefix');
-    var fieldMixinNamingPrefix = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, 'type');
-    var labelMixinNamingConvention = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Mixin naming convention');
-    var selectMixinNamingConvention = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSelect(view, mixinNamingConventions);
-    var labelMaxDecimalPlaces = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Maximum decimal places');
-    var fieldMaxDecimalPlaces = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, '2');
-    var labelScalingFactor = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'Scaling factor');
-    var fieldScalingFactor = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createField(view, '1');
-    var labelCssUnit = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createLabel(view, 'CSS unit');
-    var selectCssUnit = _ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSelect(view, cssUnits);
-    var btnExport = alert.addButtonWithTitle('Export');
-    var btnCancel = alert.addButtonWithTitle('Cancel');
-    view.frame = NSMakeRect(0, 0, 400, _ui__WEBPACK_IMPORTED_MODULE_0__["default"].getCurrentOffset());
-    alert.accessoryView = view;
-    var responseCode = alert.runModal();
+  createTextField: function createTextField(value) {
+    var field = NSTextField.alloc().init();
+    field.setStringValue(value);
+    return field;
+  },
+  createSelect: function createSelect(options) {
+    var comboBox = NSComboBox.alloc().init();
+    comboBox.addItemsWithObjectValues(options);
+    comboBox.selectItemAtIndex(0);
+    comboBox.setNumberOfVisibleItems(16);
+    comboBox.setCompletes(1);
+    return comboBox;
+  },
+  createSettingsDialog: function createSettingsDialog(context) {
+    var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    var components = arguments.length > 2 ? arguments[2] : undefined;
+    var cb = arguments.length > 3 ? arguments[3] : undefined;
+    opts.title = opts.title || 'Alert';
+    opts.informativeText = opts.informativeText || '';
+    opts.cancelBtnText = opts.cancelBtnText || 'Cancel';
+    opts.confirmBtnText = opts.confirmBtnText || 'Ok';
+    var dialog = NSAlert.alloc().init();
+    var dialogIconPath = context.plugin.urlForResourceNamed('icon.png').path();
+    var dialogIcon = NSImage.alloc().initByReferencingFile(dialogIconPath);
+    dialog.setIcon(dialogIcon);
+    dialog.setMessageText(opts.title);
+    dialog.setInformativeText(opts.informativeText);
+    var btnConfirm = dialog.addButtonWithTitle(opts.confirmBtnText);
+    var btnCancel = dialog.addButtonWithTitle(opts.cancelBtnText); // Create grid view
+
+    var gridView = NSGridView.alloc().init(); // Create object to hold all inputs
+
+    var inputs = {};
+    var height = 0; // Loop each component
+
+    components.forEach(function (c) {
+      var label, field;
+
+      switch (c.type) {
+        case 'text':
+          label = ui.createLabel(c.label);
+          field = ui.createTextField(c.value);
+          height += 22;
+          break;
+
+        case 'select':
+          label = ui.createLabel(c.label);
+          field = ui.createSelect(c.options);
+          height += 28;
+          break;
+      }
+
+      inputs[c.id] = field;
+      gridView.addRowWithViews([label, field]);
+    }); // Set grid view as view of dialog
+
+    dialog.accessoryView = gridView;
+    gridView.columnSpacing = 30;
+    gridView.frame = NSMakeRect(0, 0, 400, height); // Open the dialog and store the response code
+
+    var responseCode = dialog.runModal(); // The dialog is being 'submitted'
 
     if (responseCode === 1000) {
-      var exportOpts = {
-        cssUnit: cssUnits[selectCssUnit.indexOfSelectedItem()],
-        scalingFactor: parseFloat(fieldScalingFactor.stringValue().replace(',', '.')),
-        maxDecimalPlaces: parseInt(fieldMaxDecimalPlaces.stringValue()),
-        namingConvention: mixinNamingConventions[selectMixinNamingConvention.indexOfSelectedItem()],
-        namingPrefix: fieldMixinNamingPrefix.stringValue()
-      };
-      cb(exportOpts);
+      var data = {};
+      components.forEach(function (c) {
+        switch (c.type) {
+          case 'text':
+            data[c.id] = inputs[c.id].stringValue();
+            break;
+
+          case 'select':
+            data[c.id] = c.options[inputs[c.id].indexOfSelectedItem()];
+        }
+      });
+      cb(data);
     }
+
+    return dialog;
   }
 };
-/* harmony default export */ __webpack_exports__["default"] = (uiUtils);
+/* harmony default export */ __webpack_exports__["default"] = (ui);
 
 /***/ }),
 
