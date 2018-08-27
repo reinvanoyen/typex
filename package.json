@@ -1,6 +1,6 @@
 {
   "name": "typex",
-  "version": "0.1.1-13",
+  "version": "0.1.1-14",
   "description": "Highly configurable text styles to web (css, sass, html, json, ...) export plugin",
   "repository": {
     "type": "git",
