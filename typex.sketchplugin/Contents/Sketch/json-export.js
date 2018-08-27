@@ -348,11 +348,11 @@ var ui = {
     return field;
   },
   createSelect: function createSelect(options) {
-    var comboBox = NSComboBox.alloc().init();
-    comboBox.addItemsWithObjectValues(options);
-    comboBox.selectItemAtIndex(0);
-    comboBox.setNumberOfVisibleItems(16);
-    comboBox.setCompletes(1);
+    var comboBox = NSPopUpButton.alloc().init();
+    comboBox.addItemsWithTitles(options);
+    comboBox.selectItemAtIndex(0); //comboBox.setNumberOfVisibleItems(16);
+    //comboBox.setCompletes(1);
+
     return comboBox;
   },
   createSettingsDialog: function createSettingsDialog(context) {
@@ -375,7 +375,8 @@ var ui = {
     var gridView = NSGridView.alloc().init(); // Create object to hold all inputs
 
     var inputs = {};
-    var height = 0; // Loop each component
+    var height = 0;
+    var rowSpacing = 8; // Loop each component
 
     components.forEach(function (c) {
       var label, field;
@@ -384,13 +385,13 @@ var ui = {
         case 'text':
           label = ui.createLabel(c.label);
           field = ui.createTextField(c.value);
-          height += 22;
+          height += 22 + rowSpacing;
           break;
 
         case 'select':
           label = ui.createLabel(c.label);
           field = ui.createSelect(c.options);
-          height += 28;
+          height += 28 + rowSpacing;
           break;
       }
 
@@ -400,6 +401,7 @@ var ui = {
 
     dialog.accessoryView = gridView;
     gridView.columnSpacing = 30;
+    gridView.rowSpacing = rowSpacing;
     gridView.frame = NSMakeRect(0, 0, 400, height); // Open the dialog and store the response code
 
     var responseCode = dialog.runModal(); // The dialog is being 'submitted'

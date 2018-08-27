@@ -40,12 +40,12 @@ const ui = {
   },
   createSelect: (options) => {
 
-    let comboBox = NSComboBox.alloc().init();
+    let comboBox = NSPopUpButton.alloc().init();
 
-    comboBox.addItemsWithObjectValues(options);
+    comboBox.addItemsWithTitles(options);
     comboBox.selectItemAtIndex(0);
-    comboBox.setNumberOfVisibleItems(16);
-    comboBox.setCompletes(1);
+    //comboBox.setNumberOfVisibleItems(16);
+    //comboBox.setCompletes(1);
 
     return comboBox;
   },
@@ -59,6 +59,7 @@ const ui = {
     let dialog = NSAlert.alloc().init();
     let dialogIconPath = context.plugin.urlForResourceNamed('icon.png').path();
     let dialogIcon = NSImage.alloc().initByReferencingFile(dialogIconPath);
+
     dialog.setIcon(dialogIcon);
     dialog.setMessageText(opts.title);
     dialog.setInformativeText(opts.informativeText);
@@ -73,6 +74,8 @@ const ui = {
     let inputs = {};
     let height = 0;
 
+    let rowSpacing = 8;
+
     // Loop each component
     components.forEach(c => {
 
@@ -84,7 +87,7 @@ const ui = {
 
           label = ui.createLabel(c.label);
           field = ui.createTextField(c.value);
-          height += 22;
+          height += 22 + rowSpacing;
 
           break;
 
@@ -92,7 +95,7 @@ const ui = {
 
           label = ui.createLabel(c.label);
           field = ui.createSelect(c.options);
-          height += 28;
+          height += 28 + rowSpacing;
 
           break;
       }
@@ -105,6 +108,7 @@ const ui = {
     dialog.accessoryView = gridView;
 
     gridView.columnSpacing = 30;
+    gridView.rowSpacing = rowSpacing;
     gridView.frame = NSMakeRect(0, 0, 400, height);
 
     // Open the dialog and store the response code
