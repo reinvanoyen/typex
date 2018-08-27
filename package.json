@@ -2,8 +2,10 @@
   "name": "typex",
   "version": "0.1.1-12",
   "description": "Highly configurable text styles to web (css, sass, html, json, ...) export plugin",
-  "repository": "https://github.com/reinvanoyen/typex",
-  "engines": {
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reinvanoyen/typex"
+  },  "engines": {
     "sketch": ">=3.0"
   },
   "skpm": {
