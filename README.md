@@ -8,7 +8,12 @@
   <h5 align="center">To be fair, typeX actually still supports px...</h5>
 </p>
 
-# typeX (in development)
+# Installation
+1. <a href="https://github.com/reinvanoyen/typex/archive/master.zip" title="Download typeX">Download the plugin</a>.
+2. Unzip the downloaded file.
+3. Double click on typex.sketchplugin
+
+# typeX?
 
 typeX is a Sketch plugin which provides you with all the tools you need to export your text styles to the web platform, ready for your developer to put them to use. Instead of just giving you the typical simplistic copy-pastable CSS snippet for your text styles, you can now actually configure how to export them to css.
 
