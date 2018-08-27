@@ -13,6 +13,23 @@ const exportUtils = {
 
     return textStyles;
   },
+  removeDoubleTextStyles(textStyles) {
+
+    let uniqueTextStyles = {};
+    let filtered = [];
+
+    textStyles.forEach((textStyle, i) => {
+
+      let id = util.createTextStyleId(textStyle);
+
+      if (! uniqueTextStyles[id]) {
+        uniqueTextStyles[id] = true;
+        filtered.push(textStyle);
+      }
+    });
+
+    return filtered;
+  },
   createCssProps(textStyle, opts = {}) {
 
     opts.cssUnit = opts.cssUnit || 'px';
@@ -81,8 +98,6 @@ const exportUtils = {
   },
   createHtmlFontbook(textStyles, opts = {}) {
 
-    let exportedTextStyles = {};
-
     let output = `
       <!DOCTYPE html>
       <html lang="en">
@@ -97,30 +112,23 @@ const exportUtils = {
 
       let textStyleId = util.createTextStyleId(textStyle);
       let textStyleName = opts.textStyleNamingPrefix + ' ' + (opts.textStyleNamingConvention === 'Numeric' ? i+1 : textStyle.name);
+      let cssProps = exportUtils.createCssProps(textStyle, opts);
+      let inlineStyleString = exportUtils.createInlineStyleString(cssProps);
 
-      if (! exportedTextStyles[textStyleId]) {
-
-        let cssProps = exportUtils.createCssProps(textStyle, opts);
-        let inlineStyleString = exportUtils.createInlineStyleString(cssProps);
-
-        output += `
-          <div style="box-shadow: 0 5px 15px #f0f0f0; padding: 25px 50px; border-bottom: 1px solid #ccc;">
-            <div style="font-family: Helvetica, Arial, Sans-Serif; font-size: 14px; margin-bottom: 15px;">
-              <span>${i+1}.</span>
-              <span>
-                ${textStyleName}
-              </span>
-              <span style="color: #ccc;">
-                ${inlineStyleString}
-              </span>
-            </div>
-            <div style="${inlineStyleString};">${opts.previewText}</div>
+      output += `
+        <div style="box-shadow: 0 5px 15px #f0f0f0; padding: 25px 50px; border-bottom: 1px solid #ccc;">
+          <div style="font-family: Helvetica, Arial, Sans-Serif; font-size: 14px; margin-bottom: 15px;">
+            <span>${i+1}.</span>
+            <span>
+              ${textStyleName}
+            </span>
+            <span style="color: #ccc;">
+              ${inlineStyleString}
+            </span>
           </div>
-        `;
-
-        // Add the id to the stack of text styles we've already exported
-        exportedTextStyles[textStyleId] = true;
-      }
+          <div style="${inlineStyleString};">${opts.previewText}</div>
+        </div>
+      `;
     });
 
     output += `

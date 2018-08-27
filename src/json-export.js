@@ -15,6 +15,7 @@ export default function(context) {
     // Get the text styles from the Sketch document
     let textStyles = sketchUtils.getTextStyles(context);
     textStyles = exportUtils.sortTextStyles(textStyles);
+    textStyles = exportUtils.removeDoubleTextStyles(textStyles);
 
     let css = [];
 

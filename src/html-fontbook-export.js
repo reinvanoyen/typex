@@ -4,7 +4,6 @@ import sketchUtils from './util/sketch';
 
 export default function(context) {
 
-
   ui.createSettingsDialog(context, {
     title: 'Create HTML fontbook',
     informativeText: 'Create a handy HTML fontbook from your text styles',
@@ -51,6 +50,7 @@ export default function(context) {
     // Get the text styles from the Sketch document
     let textStyles = sketchUtils.getTextStyles(context);
     textStyles = exportUtils.sortTextStyles(textStyles);
+    textStyles = exportUtils.removeDoubleTextStyles(textStyles);
 
     // Create a HTML fontbook with these styles
     let html = exportUtils.createHtmlFontbook(textStyles, data);

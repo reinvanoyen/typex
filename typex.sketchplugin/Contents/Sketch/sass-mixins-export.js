@@ -142,6 +142,7 @@ __webpack_require__.r(__webpack_exports__);
 
     var textStyles = _util_sketch__WEBPACK_IMPORTED_MODULE_3__["default"].getTextStyles(context);
     textStyles = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].sortTextStyles(textStyles);
+    textStyles = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].removeDoubleTextStyles(textStyles);
     var sass = {};
     textStyles.forEach(function (textStyle) {
       sass[_util_string__WEBPACK_IMPORTED_MODULE_1__["default"].slugify(textStyle.name)] = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].createCssProps(textStyle, data);
@@ -187,6 +188,19 @@ var exportUtils = {
       return a.fontSize - b.fontSize;
     });
     return textStyles;
+  },
+  removeDoubleTextStyles: function removeDoubleTextStyles(textStyles) {
+    var uniqueTextStyles = {};
+    var filtered = [];
+    textStyles.forEach(function (textStyle, i) {
+      var id = _util__WEBPACK_IMPORTED_MODULE_0__["default"].createTextStyleId(textStyle);
+
+      if (!uniqueTextStyles[id]) {
+        uniqueTextStyles[id] = true;
+        filtered.push(textStyle);
+      }
+    });
+    return filtered;
   },
   createCssProps: function createCssProps(textStyle) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -250,19 +264,13 @@ var exportUtils = {
   },
   createHtmlFontbook: function createHtmlFontbook(textStyles) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    var exportedTextStyles = {};
     var output = "\n      <!DOCTYPE html>\n      <html lang=\"en\">\n      <head>\n        <meta charset=\"utf-8\">\n        <title>Typex text styles</title>\n      </head>\n      <body style=\"padding: 0; margin: 0;\">\n    ";
     textStyles.forEach(function (textStyle, i) {
       var textStyleId = _util__WEBPACK_IMPORTED_MODULE_0__["default"].createTextStyleId(textStyle);
       var textStyleName = opts.textStyleNamingPrefix + ' ' + (opts.textStyleNamingConvention === 'Numeric' ? i + 1 : textStyle.name);
-
-      if (!exportedTextStyles[textStyleId]) {
-        var cssProps = exportUtils.createCssProps(textStyle, opts);
-        var inlineStyleString = exportUtils.createInlineStyleString(cssProps);
-        output += "\n          <div style=\"box-shadow: 0 5px 15px #f0f0f0; padding: 25px 50px; border-bottom: 1px solid #ccc;\">\n            <div style=\"font-family: Helvetica, Arial, Sans-Serif; font-size: 14px; margin-bottom: 15px;\">\n              <span>".concat(i + 1, ".</span>\n              <span>\n                ").concat(textStyleName, "\n              </span>\n              <span style=\"color: #ccc;\">\n                ").concat(inlineStyleString, "\n              </span>\n            </div>\n            <div style=\"").concat(inlineStyleString, ";\">").concat(opts.previewText, "</div>\n          </div>\n        "); // Add the id to the stack of text styles we've already exported
-
-        exportedTextStyles[textStyleId] = true;
-      }
+      var cssProps = exportUtils.createCssProps(textStyle, opts);
+      var inlineStyleString = exportUtils.createInlineStyleString(cssProps);
+      output += "\n        <div style=\"box-shadow: 0 5px 15px #f0f0f0; padding: 25px 50px; border-bottom: 1px solid #ccc;\">\n          <div style=\"font-family: Helvetica, Arial, Sans-Serif; font-size: 14px; margin-bottom: 15px;\">\n            <span>".concat(i + 1, ".</span>\n            <span>\n              ").concat(textStyleName, "\n            </span>\n            <span style=\"color: #ccc;\">\n              ").concat(inlineStyleString, "\n            </span>\n          </div>\n          <div style=\"").concat(inlineStyleString, ";\">").concat(opts.previewText, "</div>\n        </div>\n      ");
     });
     output += "\n      </body>\n      </html>\n    ";
     return output;
