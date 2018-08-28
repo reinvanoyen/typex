@@ -3,7 +3,7 @@
     <img width="100" height="100" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/icon.png" />
   </a>
   <h3 align="center">Export your text styles to CSS, SASS, HTML, ...</h3>
-  <h4 align="center">Give your developer web-ready SASS-mixins or CSS classes with em or rem support!</h4>
+  <h4 align="center">Web-ready SASS-mixins or CSS classes with em or rem support! (developers love it!)</h4>
 </p>
 <p align="center">
   <a href="http://bit.ly/SketchRunnerWebsite">
