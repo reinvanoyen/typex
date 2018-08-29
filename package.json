@@ -18,12 +18,26 @@
     ]
   },
   "scripts": {
+    "build-frontend": "browserify src/frontend/init.js -o typex.sketchplugin/Contents/Resources/frontend/init.js -t [ babelify --presets=env,react ]",
     "build": "skpm-build",
     "watch": "skpm-build --watch",
     "start": "skpm-build --watch --run",
-    "postinstall": "npm run build && skpm-link"
+    "postinstall": "npm run build && npm run build-frontend && skpm-link"
   },
   "devDependencies": {
-    "@skpm/builder": "^0.5.2"
+    "@skpm/builder": "^0.5.2",
+    "antd": "^3.8.4",
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babelify": "^8.0.0",
+    "browserify": "^16.2.2",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
+  },
+  "dependencies": {
+    "sketch-module-web-view": "^1.2.3"
   }
 }

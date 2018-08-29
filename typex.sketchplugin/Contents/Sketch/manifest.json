@@ -26,6 +26,11 @@
       "shortcut": "ctrl shift s",
       "identifier": "sass-mixins-export",
       "script": "sass-mixins-export.js"
+    },
+    {
+      "name": "Webview",
+      "identifier": "webview-window",
+      "script": "webview-window.js"
     }
   ],
   "menu": {
@@ -34,10 +39,11 @@
       "html-fontbook-export",
       "json-export",
       "css-export",
-      "sass-mixins-export"
+      "sass-mixins-export",
+      "webview-window"
     ]
   },
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Highly configurable text styles to web (css, sass, html, json, ...) export plugin",
   "name": "typex",
   "identifier": "typex",
