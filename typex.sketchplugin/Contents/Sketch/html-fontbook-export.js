@@ -112,6 +112,11 @@ __webpack_require__.r(__webpack_exports__);
     informativeText: 'Create a handy HTML fontbook from your text styles',
     confirmBtnText: 'Export HTML fontbook'
   }, [{
+    type: 'multicheckbox',
+    id: 'excludeProps',
+    label: 'Exclude properties (merges text styles)',
+    values: ['Color', 'Line height']
+  }, {
     type: 'select',
     id: 'cssUnit',
     options: ['px', 'em', 'rem'],
@@ -142,9 +147,21 @@ __webpack_require__.r(__webpack_exports__);
     value: 'The quick brown fox jumps over the lazy dog',
     label: 'Preview text'
   }], function (data) {
-    // Get the text styles from the Sketch document
+    // First store the properties we should exclude
+    var excludeProps = [];
+
+    if (data['excludeProps']['Color']) {
+      excludeProps.push('color');
+    }
+
+    if (data['excludeProps']['Line height']) {
+      excludeProps.push('lineHeight');
+    } // Get the text styles from the Sketch document
+
+
     var textStyles = _util_sketch__WEBPACK_IMPORTED_MODULE_2__["default"].getTextStyles(context);
     textStyles = _util_export__WEBPACK_IMPORTED_MODULE_1__["default"].sortTextStyles(textStyles);
+    textStyles = _util_export__WEBPACK_IMPORTED_MODULE_1__["default"].excludeTextStyleProperties(textStyles, excludeProps);
     textStyles = _util_export__WEBPACK_IMPORTED_MODULE_1__["default"].removeDoubleTextStyles(textStyles); // Create a HTML fontbook with these styles
 
     var html = _util_export__WEBPACK_IMPORTED_MODULE_1__["default"].createHtmlFontbook(textStyles, data); // Ask the user to save the file
@@ -179,6 +196,17 @@ var exportUtils = {
     });
     return textStyles;
   },
+  excludeTextStyleProperties: function excludeTextStyleProperties(textStyles) {
+    var excludedProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+    textStyles.forEach(function (textStyle) {
+      excludedProps.forEach(function (prop) {
+        if (textStyle[prop]) {
+          delete textStyle[prop];
+        }
+      });
+    });
+    return textStyles;
+  },
   removeDoubleTextStyles: function removeDoubleTextStyles(textStyles) {
     var uniqueTextStyles = {};
     var filtered = [];
@@ -200,7 +228,6 @@ var exportUtils = {
     var cssProps = {};
     cssProps['font-family'] = textStyle.fontFamily;
     cssProps['font-weight'] = 400;
-    cssProps['line-height'] = 1;
     cssProps['text-transform'] = 'none';
     var fontParts = textStyle.fontFamily.split('-');
     var fontWeightMap = {
@@ -232,7 +259,17 @@ var exportUtils = {
       cssProps['line-height'] = _number__WEBPACK_IMPORTED_MODULE_1__["default"].parseFloatMaxDecimal(1 + (textStyle.lineHeight - textStyle.fontSize) / textStyle.lineHeight, opts.maxDecimalPlaces);
     }
 
+    if (textStyle.color) {
+      cssProps['color'] = exportUtils.createRgbaString(textStyle.color);
+    }
+
     return cssProps;
+  },
+  createRgbaString: function createRgbaString(colorObj) {
+    return 'rgba(' + exportUtils.createColorValue(colorObj.r) + ',' + exportUtils.createColorValue(colorObj.g) + ',' + exportUtils.createColorValue(colorObj.b) + ',' + colorObj.a + ')';
+  },
+  createColorValue: function createColorValue(normalizedValue) {
+    return Math.round(normalizedValue * 255);
   },
   createStyleBlock: function createStyleBlock(cssProps) {
     var output = '';
@@ -324,6 +361,21 @@ var sketch = {
         textStyle.lineHeight = textStyle.paragraph.maximumLineHeight();
       }
 
+      var color = rawTextStyle.attributes.MSAttributedStringColorAttribute;
+
+      if (color) {
+        var r = color.red();
+        var g = color.green();
+        var b = color.blue();
+        var a = color.alpha();
+        textStyle.color = {
+          r: r,
+          g: g,
+          b: b,
+          a: a
+        };
+      }
+
       textStyle.letterSpacing = rawTextStyle.attributes.NSKern || 0;
       textStyle.textTransform = parseInt(rawTextStyle.attributes.MSAttributedStringTextTransformAttribute || 0); // @TODO strikethrough & underline, or is this not needed?
 
@@ -360,7 +412,8 @@ var ui = {
       file.writeToFile_atomically_encoding_error(path, true, NSUTF8StringEncoding, null);
     }
   },
-  createLabel: function createLabel(text) {
+  createLabel: function createLabel() {
+    var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
     var label = NSTextField.alloc().init();
     label.setStringValue(text);
     label.setFont(NSFont.boldSystemFontOfSize(12));
@@ -378,10 +431,18 @@ var ui = {
   createSelect: function createSelect(options) {
     var comboBox = NSPopUpButton.alloc().init();
     comboBox.addItemsWithTitles(options);
-    comboBox.selectItemAtIndex(0); //comboBox.setNumberOfVisibleItems(16);
-    //comboBox.setCompletes(1);
-
+    comboBox.selectItemAtIndex(0);
     return comboBox;
+  },
+  createStepper: function createStepper(value) {
+    var stepper = NSStepper.alloc().init();
+    return stepper;
+  },
+  createCheckbox: function createCheckbox(title) {
+    var checkbox = NSButton.alloc().init();
+    checkbox.setButtonType(NSSwitchButton);
+    checkbox.title = title;
+    return checkbox;
   },
   createSettingsDialog: function createSettingsDialog(context) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -414,17 +475,43 @@ var ui = {
           label = ui.createLabel(c.label);
           field = ui.createTextField(c.value);
           height += 22 + rowSpacing;
+          gridView.addRowWithViews([label, field]);
+          break;
+
+        case 'stepper':
+          label = ui.createLabel(c.label);
+          field = ui.createStepper(c.value);
+          height += 22 + rowSpacing;
+          gridView.addRowWithViews([label, field]);
+          break;
+
+        case 'checkbox':
+          label = ui.createLabel(c.label);
+          field = ui.createCheckbox();
+          height += 22 + rowSpacing;
+          gridView.addRowWithViews([label, field]);
+          break;
+
+        case 'multicheckbox':
+          field = [];
+          c.values.forEach(function (v, i) {
+            label = i ? ui.createLabel() : ui.createLabel(c.label);
+            var checkbox = ui.createCheckbox(v);
+            height += 22 + rowSpacing;
+            field.push(checkbox);
+            gridView.addRowWithViews([label, checkbox]);
+          });
           break;
 
         case 'select':
           label = ui.createLabel(c.label);
           field = ui.createSelect(c.options);
           height += 28 + rowSpacing;
+          gridView.addRowWithViews([label, field]);
           break;
       }
 
       inputs[c.id] = field;
-      gridView.addRowWithViews([label, field]);
     }); // Set grid view as view of dialog
 
     dialog.accessoryView = gridView;
@@ -444,9 +531,21 @@ var ui = {
 
           case 'select':
             data[c.id] = c.options[inputs[c.id].indexOfSelectedItem()];
+            break;
+
+          case 'checkbox':
+            break;
+
+          case 'multicheckbox':
+            var values = {};
+            c.values.forEach(function (v, i) {
+              values[v] = inputs[c.id][i].state() === 1;
+            });
+            data[c.id] = values;
         }
       });
       cb(data);
+      return;
     }
 
     return dialog;
@@ -473,9 +572,17 @@ var util = {
 
     textStyleId += textStyle.fontFamily;
     textStyleId += '-' + textStyle.fontSize;
-    textStyleId += '-' + textStyle.lineHeight;
     textStyleId += '-' + textStyle.letterSpacing;
     textStyleId += '-' + textStyle.textTransform;
+
+    if (textStyle.lineHeight) {
+      textStyleId += '-' + textStyle.lineHeight;
+    }
+
+    if (textStyle.color) {
+      textStyleId += '-' + textStyle.color.r + '-' + textStyle.color.g + '-' + textStyle.color.b + '-' + textStyle.color.a;
+    }
+
     return textStyleId;
   }
 };
