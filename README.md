@@ -16,7 +16,7 @@
 2. Unzip the downloaded file.
 3. Double click on typex.sketchplugin
 
-# typeX?
+# Typex?
 
 typeX is a Sketch plugin which provides you with all the tools you need to export your text styles to the web platform, ready for your developer to put them to use. Instead of just giving you the typical simplistic copy-pastable CSS snippet for your text styles, you can now actually configure how to export them to css.
 
