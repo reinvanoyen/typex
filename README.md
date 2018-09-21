@@ -18,7 +18,7 @@
 
 # Typex?
 
-typeX is a Sketch plugin which provides you with all the tools you need to export your text styles to the web platform, ready for your developer to put them to use. Instead of just giving you the typical simplistic copy-pastable CSS snippet for your text styles, you can now actually configure how to export them to css.
+Typex is a Sketch plugin which provides you with all the tools you need to export your text styles to the web platform, ready for your developer to put them to use. Instead of just giving you the typical simplistic copy-pastable CSS snippet for your text styles, you can now actually configure how to export them to css.
 
 <img width="730" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/context-menu.png" />
 <img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/sass-export-window.png" />
