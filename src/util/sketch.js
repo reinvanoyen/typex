@@ -30,6 +30,22 @@ const sketch = {
         textStyle.lineHeight = textStyle.paragraph.maximumLineHeight();
       }
 
+      let color = rawTextStyle.attributes.MSAttributedStringColorAttribute;
+
+      if (color) {
+        let r = color.red();
+        let g = color.green();
+        let b = color.blue();
+        let a = color.alpha();
+
+        textStyle.color = {
+          r: r,
+          g: g,
+          b: b,
+          a: a
+        };
+      }
+
       textStyle.letterSpacing = rawTextStyle.attributes.NSKern || 0;
       textStyle.textTransform = parseInt(rawTextStyle.attributes.MSAttributedStringTextTransformAttribute || 0);
 

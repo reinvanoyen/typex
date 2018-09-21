@@ -17,7 +17,7 @@ const ui = {
       file.writeToFile_atomically_encoding_error(path, true, NSUTF8StringEncoding, null);
     }
   },
-  createLabel: (text) => {
+  createLabel: (text = '') => {
 
     let label = NSTextField.alloc().init();
 
@@ -44,10 +44,20 @@ const ui = {
 
     comboBox.addItemsWithTitles(options);
     comboBox.selectItemAtIndex(0);
-    //comboBox.setNumberOfVisibleItems(16);
-    //comboBox.setCompletes(1);
 
     return comboBox;
+  },
+  createStepper: (value) => {
+
+    let stepper = NSStepper.alloc().init();
+    return stepper;
+  },
+  createCheckbox: (title) => {
+
+    let checkbox = NSButton.alloc().init();
+    checkbox.setButtonType(NSSwitchButton);
+    checkbox.title = title;
+    return checkbox;
   },
   createSettingsDialog(context, opts = {}, components, cb) {
 
@@ -88,6 +98,42 @@ const ui = {
           label = ui.createLabel(c.label);
           field = ui.createTextField(c.value);
           height += 22 + rowSpacing;
+          gridView.addRowWithViews([label, field]);
+
+          break;
+
+        case 'stepper':
+
+          label = ui.createLabel(c.label);
+          field = ui.createStepper(c.value);
+          height += 22 + rowSpacing;
+          gridView.addRowWithViews([label, field]);
+
+          break;
+
+        case 'checkbox':
+
+          label = ui.createLabel(c.label);
+          field = ui.createCheckbox();
+          height += 22 + rowSpacing;
+          gridView.addRowWithViews([label, field]);
+
+          break;
+
+        case 'multicheckbox':
+
+          field = [];
+
+          c.values.forEach((v, i) => {
+
+            label = (i ? ui.createLabel() : ui.createLabel(c.label));
+
+            let checkbox = ui.createCheckbox(v);
+            height += 22 + rowSpacing;
+
+            field.push(checkbox);
+            gridView.addRowWithViews([label, checkbox]);
+          });
 
           break;
 
@@ -96,12 +142,12 @@ const ui = {
           label = ui.createLabel(c.label);
           field = ui.createSelect(c.options);
           height += 28 + rowSpacing;
+          gridView.addRowWithViews([label, field]);
 
           break;
       }
 
       inputs[c.id] = field;
-      gridView.addRowWithViews([label, field]);
     });
 
     // Set grid view as view of dialog
@@ -127,10 +173,23 @@ const ui = {
             break;
           case 'select':
             data[c.id] = c.options[inputs[c.id].indexOfSelectedItem()];
+            break;
+          case 'checkbox':
+            break;
+          case 'multicheckbox':
+
+            let values = {};
+
+            c.values.forEach((v, i) => {
+              values[v] = ( inputs[c.id][i].state() === 1 );
+            });
+
+            data[c.id] = values;
         }
       });
 
       cb(data);
+      return;
     }
 
     return dialog;

@@ -13,6 +13,18 @@ const exportUtils = {
 
     return textStyles;
   },
+  excludeTextStyleProperties(textStyles, excludedProps = []) {
+
+    textStyles.forEach(textStyle => {
+      excludedProps.forEach(prop => {
+        if (textStyle[prop]) {
+          delete textStyle[prop];
+        }
+      });
+    });
+
+    return textStyles;
+  },
   removeDoubleTextStyles(textStyles) {
 
     let uniqueTextStyles = {};
@@ -40,7 +52,6 @@ const exportUtils = {
 
     cssProps['font-family'] = textStyle.fontFamily;
     cssProps['font-weight'] = 400;
-    cssProps['line-height'] = 1;
     cssProps['text-transform'] = 'none';
 
     let fontParts = textStyle.fontFamily.split('-');
@@ -74,7 +85,17 @@ const exportUtils = {
       cssProps['line-height'] = numberUtils.parseFloatMaxDecimal(1 + (textStyle.lineHeight - textStyle.fontSize) / textStyle.lineHeight, opts.maxDecimalPlaces);
     }
 
+    if (textStyle.color) {
+      cssProps['color'] = exportUtils.createRgbaString(textStyle.color);
+    }
+
     return cssProps;
+  },
+  createRgbaString(colorObj) {
+    return 'rgba('+exportUtils.createColorValue(colorObj.r)+','+exportUtils.createColorValue(colorObj.g)+','+exportUtils.createColorValue(colorObj.b)+','+colorObj.a+')';
+  },
+  createColorValue(normalizedValue) {
+    return Math.round(normalizedValue * 255);
   },
   createStyleBlock(cssProps) {
 

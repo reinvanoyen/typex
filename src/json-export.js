@@ -6,10 +6,9 @@ export default function(context) {
 
   ui.createSettingsDialog(context, {
     title: 'JSON export',
-    informativeText: 'Export text styles as a JSON file',
+    informativeText: 'Export text styles as a JSON file (in development)',
     confirmBtnText: 'Export as JSON'
   }, [
-
   ], (data) => {
 
     // Get the text styles from the Sketch document

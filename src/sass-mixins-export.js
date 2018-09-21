@@ -10,6 +10,15 @@ export default function(context) {
     informativeText: 'Export each text style as a SASS mixin'
   }, [
     {
+      type: 'multicheckbox',
+      id: 'excludeProps',
+      label: 'Exclude properties (merges text styles)',
+      values: [
+        'Color',
+        'Line height'
+      ]
+    },
+    {
       type: 'select',
       id: 'cssUnit',
       options: ['px', 'em', 'rem'],
@@ -43,9 +52,20 @@ export default function(context) {
 
     data.mixinNamingConvention = data.mixinNamingConvention || 'Numeric';
 
+    // First store the properties we should exclude
+    let excludeProps = [];
+    if (data['excludeProps']['Color']) {
+      excludeProps.push('color');
+    }
+
+    if (data['excludeProps']['Line height']) {
+      excludeProps.push('lineHeight');
+    }
+
     // Get the text styles from the Sketch document
     let textStyles = sketchUtils.getTextStyles(context);
     textStyles = exportUtils.sortTextStyles(textStyles);
+    textStyles = exportUtils.excludeTextStyleProperties(textStyles, excludeProps);
     textStyles = exportUtils.removeDoubleTextStyles(textStyles);
 
     let sass = {};

@@ -10,9 +10,22 @@ export default function(context) {
     informativeText: 'Export each text style as a class, ready to be used in your HTML-files'
   }, [
     {
+      type: 'multicheckbox',
+      id: 'excludeProps',
+      label: 'Exclude properties (merges text styles)',
+      values: [
+        'Color',
+        'Line height'
+      ]
+    },
+    {
       type: 'select',
       id: 'cssUnit',
-      options: ['px', 'em', 'rem'],
+      options: [
+        'px',
+        'em',
+        'rem'
+      ],
       label: 'Css unit'
     },
     {
@@ -36,16 +49,30 @@ export default function(context) {
     {
       type: 'select',
       id: 'classNamingConvention',
-      options: ['Numeric', 'Text style name'],
+      options: [
+        'Numeric',
+        'Text style name'
+      ],
       label: 'Class naming convention'
     }
   ], (data) => {
 
     data.classNamingConvention = data.classNamingConvention || 'Numeric';
 
+    // First store the properties we should exclude
+    let excludeProps = [];
+    if (data['excludeProps']['Color']) {
+      excludeProps.push('color');
+    }
+
+    if (data['excludeProps']['Line height']) {
+      excludeProps.push('lineHeight');
+    }
+
     // Get the text styles from the Sketch document
     let textStyles = sketchUtils.getTextStyles(context);
     textStyles = exportUtils.sortTextStyles(textStyles);
+    textStyles = exportUtils.excludeTextStyleProperties(textStyles, excludeProps);
     textStyles = exportUtils.removeDoubleTextStyles(textStyles);
 
     let css = {};
