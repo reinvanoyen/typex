@@ -24,15 +24,5 @@ typeX is a Sketch plugin which provides you with all the tools you need to expor
 <img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/sass-export-window.png" />
 <img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/html-fontbook-export-window.png" />
 
-## Done
-* Order text styles by size
-* Export your text styles to a HTML fontbook (including text style name, CSS properties and preview text)
-* Export text styles to basic JSON
-* Export SASS (as file) with each text style being a custom named mixin
-* Export CSS classes (as file)
- 
 ## Todo
-* Make settings window for export to CSS classes
-* Add option to customize the order in which to export the text styles (by font family, size, color, Sketch order, ...)
-* Add option to exclude some text style properties
-* Add more options for the HTML fontbook export to change the style of the exported document (background color, text color, ...)
+* Create a text styles web preview
