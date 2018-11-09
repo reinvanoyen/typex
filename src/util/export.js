@@ -132,9 +132,17 @@ const exportUtils = {
     textStyles.forEach((textStyle, i) => {
 
       let textStyleId = util.createTextStyleId(textStyle);
-      let textStyleName = opts.textStyleNamingPrefix + ' ' + (opts.textStyleNamingConvention === 'Numeric' ? i+1 : textStyle.name);
       let cssProps = exportUtils.createCssProps(textStyle, opts);
       let inlineStyleString = exportUtils.createInlineStyleString(cssProps);
+      let textStyleName;
+
+      if (opts.textStyleNamingConvention === 'Numeric') {
+        textStyleName = opts.textStyleNamingPrefix + ' ' + (i+1);
+      } else if (opts.textStyleNamingConvention === 'Text style name') {
+        textStyleName = opts.textStyleNamingPrefix + ' ' + textStyle.name;
+      } else {
+        textStyleName = opts.textStyleNamingPrefix + ' ' + (i+1) + ' ('+textStyle.name+')';
+      }
 
       output += `
         <div style="box-shadow: 0 5px 15px #f0f0f0; padding: 25px 50px; border-bottom: 1px solid #ccc;">

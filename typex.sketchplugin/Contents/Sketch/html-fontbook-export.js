@@ -139,7 +139,7 @@ __webpack_require__.r(__webpack_exports__);
   }, {
     type: 'select',
     id: 'textStyleNamingConvention',
-    options: ['Numeric', 'Text style name'],
+    options: ['Numeric + text style name', 'Numeric', 'Text style name'],
     label: 'Text style naming convention'
   }, {
     type: 'text',
@@ -294,9 +294,18 @@ var exportUtils = {
     var output = "\n      <!DOCTYPE html>\n      <html lang=\"en\">\n      <head>\n        <meta charset=\"utf-8\">\n        <title>Typex text styles</title>\n      </head>\n      <body style=\"padding: 0; margin: 0;\">\n    ";
     textStyles.forEach(function (textStyle, i) {
       var textStyleId = _util__WEBPACK_IMPORTED_MODULE_0__["default"].createTextStyleId(textStyle);
-      var textStyleName = opts.textStyleNamingPrefix + ' ' + (opts.textStyleNamingConvention === 'Numeric' ? i + 1 : textStyle.name);
       var cssProps = exportUtils.createCssProps(textStyle, opts);
       var inlineStyleString = exportUtils.createInlineStyleString(cssProps);
+      var textStyleName;
+
+      if (opts.textStyleNamingConvention === 'Numeric') {
+        textStyleName = opts.textStyleNamingPrefix + ' ' + (i + 1);
+      } else if (opts.textStyleNamingConvention === 'Text style name') {
+        textStyleName = opts.textStyleNamingPrefix + ' ' + textStyle.name;
+      } else {
+        textStyleName = opts.textStyleNamingPrefix + ' ' + (i + 1) + ' (' + textStyle.name + ')';
+      }
+
       output += "\n        <div style=\"box-shadow: 0 5px 15px #f0f0f0; padding: 25px 50px; border-bottom: 1px solid #ccc;\">\n          <div style=\"font-family: Helvetica, Arial, Sans-Serif; font-size: 14px; margin-bottom: 15px;\">\n            <span>".concat(i + 1, ".</span>\n            <span>\n              ").concat(textStyleName, "\n            </span>\n            <span style=\"color: #ccc;\">\n              ").concat(inlineStyleString, "\n            </span>\n          </div>\n          <div style=\"").concat(inlineStyleString, ";\">").concat(opts.previewText, "</div>\n        </div>\n      ");
     });
     output += "\n      </body>\n      </html>\n    ";

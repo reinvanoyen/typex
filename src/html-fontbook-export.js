@@ -45,7 +45,7 @@ export default function(context) {
     {
       type: 'select',
       id: 'textStyleNamingConvention',
-      options: ['Numeric', 'Text style name'],
+      options: ['Numeric + text style name', 'Numeric', 'Text style name'],
       label: 'Text style naming convention'
     },
     {
