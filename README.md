@@ -21,6 +21,6 @@
 Typex is a Sketch plugin which provides you with all the tools you need to export your text styles to the web platform, ready for your developer to put them to use. Instead of just giving you the typical simplistic copy-pastable CSS snippet for your text styles, you can now actually configure how to export them to CSS, SASS mixins and JSON.
 
 <img width="730" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/context-menu.png" />
-<img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/sass-export-window.png" />
-<img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/html-fontbook-export-window.png" />
-<img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/json-export-window.png" />
+<img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/sass-export.png" />
+<img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/html-fontbook-export.png" />
+<img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/json-export.png" />

@@ -37,7 +37,7 @@
       "sass-mixins-export"
     ]
   },
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "Text styles to CSS, SASS mixins, HTML, JSON, ...",
   "name": "typex",
   "identifier": "typex",
