@@ -232,7 +232,7 @@ var exportUtils = {
   },
   createCssProps: function createCssProps(textStyle) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    opts.cssUnit = opts.cssUnit || 'px';
+    opts.cssUnit = opts.cssUnit || 0;
     opts.scalingFactor = opts.scalingFactor || 1;
     opts.maxDecimalPlaces = opts.maxDecimalPlaces || 2;
     var cssProps = {};

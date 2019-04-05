@@ -86,15 +86,15 @@ var exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/sass-mixins-export.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/advanced-json-export.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/sass-mixins-export.js":
-/*!***********************************!*\
-  !*** ./src/sass-mixins-export.js ***!
-  \***********************************/
+/***/ "./src/advanced-json-export.js":
+/*!*************************************!*\
+  !*** ./src/advanced-json-export.js ***!
+  \*************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -110,8 +110,8 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
   _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSettingsDialog(context, {
-    title: 'SASS mixins export',
-    informativeText: 'Export each text style as a SASS mixin'
+    title: 'JSON export',
+    informativeText: 'Export text styles in JSON format'
   }, [{
     type: 'multicheckbox',
     id: 'excludeProps',
@@ -120,7 +120,7 @@ __webpack_require__.r(__webpack_exports__);
   }, {
     type: 'select',
     id: 'cssUnit',
-    options: ['px', 'em', 'rem'],
+    options: ['No unit', 'px', 'em', 'rem'],
     label: 'Css unit'
   }, {
     type: 'text',
@@ -134,16 +134,18 @@ __webpack_require__.r(__webpack_exports__);
     label: 'Maximal decimal places'
   }, {
     type: 'text',
-    id: 'mixinNamingPrefix',
+    id: 'propertyNamingPrefix',
     value: 'type',
-    label: 'Mixin naming prefix'
+    label: 'JSON Property naming prefix'
   }, {
     type: 'select',
-    id: 'mixinNamingConvention',
+    id: 'propertyNamingConvention',
     options: ['Numeric', 'Text style name'],
-    label: 'Mixin naming convention'
+    label: 'JSON Property naming convention'
   }], function (data) {
-    data.mixinNamingConvention = data.mixinNamingConvention || 'Numeric'; // First store the properties we should exclude
+    // Defaults
+    data.propertyNamingConvention = data.propertyNamingConvention || 'Numeric';
+    data.cssUnit = data.cssUnit === 'No unit' ? 0 : data.cssUnit; // First store the properties we should exclude
 
     var excludeProps = [];
 
@@ -160,23 +162,14 @@ __webpack_require__.r(__webpack_exports__);
     textStyles = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].sortTextStyles(textStyles);
     textStyles = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].excludeTextStyleProperties(textStyles, excludeProps);
     textStyles = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].removeDoubleTextStyles(textStyles);
-    var sass = {};
-    textStyles.forEach(function (textStyle) {
-      sass[_util_string__WEBPACK_IMPORTED_MODULE_1__["default"].slugify(textStyle.name)] = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].createCssProps(textStyle, data);
-    });
-    var output = '';
-    var i = 0;
+    var textStyleJson = {};
+    textStyles.forEach(function (textStyle, i) {
+      var textStyleIdentifier = _util_string__WEBPACK_IMPORTED_MODULE_1__["default"].slugify(textStyle.name);
+      var stylePropertyNaming = data.propertyNamingPrefix + '-' + (data.propertyNamingConvention === 'Numeric' ? i + 1 : textStyleIdentifier);
+      textStyleJson[stylePropertyNaming] = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].createCssProps(textStyle, data);
+    }); // Ask the user to save the file
 
-    for (var identifier in sass) {
-      var mixinName = data.mixinNamingPrefix + '-' + (data.mixinNamingConvention === 'Numeric' ? i + 1 : identifier);
-      output += (i !== 0 ? "\n" : '') + '@mixin ' + mixinName + "\n";
-      output += '{' + "\n";
-      output += _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].createStyleBlock(sass[identifier]);
-      output += '}' + "\n";
-      i++;
-    }
-
-    _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSavePanel('typex-mixins.scss', output);
+    _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSavePanel('typex-text-styles.json', JSON.stringify(textStyleJson));
   });
 });
 ;
@@ -653,4 +646,4 @@ var util = {
 }
 that['onRun'] = __skpm_run.bind(this, 'default')
 
-//# sourceMappingURL=sass-mixins-export.js.map
+//# sourceMappingURL=advanced-json-export.js.map

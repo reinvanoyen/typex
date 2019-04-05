@@ -1,7 +1,7 @@
 {
   "name": "typex",
   "version": "0.6.0",
-  "description": "Highly configurable text styles to web (css, sass, html, json, ...) export plugin",
+  "description": "Text styles to CSS, SASS mixins, HTML, JSON, ...",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/reinvanoyen/typex"

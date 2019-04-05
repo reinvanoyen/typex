@@ -2,8 +2,8 @@
   <a href="https://github.com/reinvanoyen/typex">
     <img width="100" height="100" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/icon.png" />
   </a>
-  <h3 align="center">Export your text styles to CSS, SASS, HTML, ...</h3>
-  <h4 align="center">Web-ready SASS-mixins or CSS classes with em or rem support! (developers love it!)</h4>
+  <h3 align="center">Export your text styles to CSS, SASS mixins, JSON, HTML, ...</h3>
+  <h4 align="center">Highly configurable (Including rem, em units, etc)</h4>
 </p>
 <p align="center">
   <a href="http://bit.ly/SketchRunnerWebsite">
@@ -18,11 +18,9 @@
 
 # Typex?
 
-Typex is a Sketch plugin which provides you with all the tools you need to export your text styles to the web platform, ready for your developer to put them to use. Instead of just giving you the typical simplistic copy-pastable CSS snippet for your text styles, you can now actually configure how to export them to css.
+Typex is a Sketch plugin which provides you with all the tools you need to export your text styles to the web platform, ready for your developer to put them to use. Instead of just giving you the typical simplistic copy-pastable CSS snippet for your text styles, you can now actually configure how to export them to CSS, SASS mixins and JSON.
 
 <img width="730" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/context-menu.png" />
 <img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/sass-export-window.png" />
 <img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/html-fontbook-export-window.png" />
-
-## Todo
-* Create a text styles web preview
+<img width="635" src="https://raw.githubusercontent.com/reinvanoyen/typex/master/json-export-window.png" />
