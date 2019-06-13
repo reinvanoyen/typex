@@ -1,76 +1,14 @@
 import ui from './util/ui';
 import exportUtils from './util/export';
-import sketchUtils from './util/sketch';
+import openExportDialog from "./export/open-export-dialog";
 
 export default function(context) {
 
-  ui.createSettingsDialog(context, {
+  openExportDialog(context, {
     title: 'Create HTML fontbook',
     informativeText: 'Create a handy HTML fontbook from your text styles',
     confirmBtnText: 'Export HTML fontbook'
-  }, [
-    {
-      type: 'multicheckbox',
-      id: 'excludeProps',
-      label: 'Exclude properties (merges text styles)',
-      values: [
-        'Color',
-        'Line height'
-      ]
-    },
-    {
-      type: 'select',
-      id: 'cssUnit',
-      options: ['px', 'em', 'rem'],
-      label: 'Css unit'
-    },
-    {
-      type: 'text',
-      id: 'scalingFactor',
-      value: 1,
-      label: 'Size scaling factor'
-    },
-    {
-      type: 'text',
-      id: 'maxDecimalPlaces',
-      value: 2,
-      label: 'Maximal decimal places'
-    },
-    {
-      type: 'text',
-      id: 'textStyleNamingPrefix',
-      value: 'type',
-      label: 'Text style naming prefix'
-    },
-    {
-      type: 'select',
-      id: 'textStyleNamingConvention',
-      options: ['Numeric + text style name', 'Numeric', 'Text style name'],
-      label: 'Text style naming convention'
-    },
-    {
-      type: 'text',
-      id: 'previewText',
-      value: 'The quick brown fox jumps over the lazy dog',
-      label: 'Preview text'
-    }
-  ], (data) => {
-
-    // First store the properties we should exclude
-    let excludeProps = [];
-    if (data['excludeProps']['Color']) {
-      excludeProps.push('color');
-    }
-
-    if (data['excludeProps']['Line height']) {
-      excludeProps.push('lineHeight');
-    }
-
-    // Get the text styles from the Sketch document
-    let textStyles = sketchUtils.getTextStyles(context);
-    textStyles = exportUtils.sortTextStyles(textStyles);
-    textStyles = exportUtils.excludeTextStyleProperties(textStyles, excludeProps);
-    textStyles = exportUtils.removeDoubleTextStyles(textStyles);
+  }, (textStyles, data) => {
 
     // Create a HTML fontbook with these styles
     let html = exportUtils.createHtmlFontbook(textStyles, data);

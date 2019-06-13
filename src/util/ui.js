@@ -114,7 +114,7 @@ const ui = {
         case 'checkbox':
 
           label = ui.createLabel(c.label);
-          field = ui.createCheckbox();
+          field = ui.createCheckbox(c.value);
           height += 22 + rowSpacing;
           gridView.addRowWithViews([label, field]);
 
@@ -175,9 +175,10 @@ const ui = {
             data[c.id] = c.options[inputs[c.id].indexOfSelectedItem()];
             break;
           case 'checkbox':
+            data[c.id] = (inputs[c.id].state() === 1);
             break;
-          case 'multicheckbox':
 
+          case 'multicheckbox':
             let values = {};
 
             c.values.forEach((v, i) => {

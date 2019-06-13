@@ -92,7 +92,7 @@ const exportUtils = {
     return cssProps;
   },
   createRgbaString(colorObj) {
-    return 'rgba('+exportUtils.createColorValue(colorObj.r)+','+exportUtils.createColorValue(colorObj.g)+','+exportUtils.createColorValue(colorObj.b)+','+colorObj.a+')';
+    return 'rgba('+exportUtils.createColorValue(colorObj.r)+', '+exportUtils.createColorValue(colorObj.g)+', '+exportUtils.createColorValue(colorObj.b)+', '+colorObj.a+')';
   },
   createColorValue(normalizedValue) {
     return Math.round(normalizedValue * 255);
@@ -131,17 +131,23 @@ const exportUtils = {
 
     textStyles.forEach((textStyle, i) => {
 
-      let textStyleId = util.createTextStyleId(textStyle);
       let cssProps = exportUtils.createCssProps(textStyle, opts);
       let inlineStyleString = exportUtils.createInlineStyleString(cssProps);
+      let cssPropsBlock = exportUtils.createStyleBlock(cssProps);
+
       let textStyleName;
 
-      if (opts.textStyleNamingConvention === 'Numeric') {
-        textStyleName = opts.textStyleNamingPrefix + ' ' + (i+1);
-      } else if (opts.textStyleNamingConvention === 'Text style name') {
-        textStyleName = opts.textStyleNamingPrefix + ' ' + textStyle.name;
+      if (opts.namingConvention === 'Numeric') {
+
+        textStyleName = opts.namingPrefix + ' ' + (i+1);
+
+      } else if (opts.namingConvention === 'Text style name') {
+
+        textStyleName = opts.namingPrefix + ' ' + textStyle.name;
+
       } else {
-        textStyleName = opts.textStyleNamingPrefix + ' ' + (i+1) + ' ('+textStyle.name+')';
+
+        textStyleName = opts.namingPrefix + ' ' + (i+1) + ' ('+textStyle.name+')';
       }
 
       output += `
@@ -151,11 +157,15 @@ const exportUtils = {
             <span>
               ${textStyleName}
             </span>
-            <span style="color: #ccc;">
-              ${inlineStyleString}
-            </span>
           </div>
-          <div style="${inlineStyleString};">${opts.previewText}</div>
+          <div style="display: flex; justify-content: space-between;">
+            <div style="${inlineStyleString};">
+              The quick brown fox jumps over the lazy dog
+            </div>
+            <div>
+                <textarea cols="35" rows="8" style="border: 1px solid #ccc; resize: none;">${cssPropsBlock}</textarea>
+            </div>
+          </div>
         </div>
       `;
     });
