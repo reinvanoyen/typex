@@ -4,25 +4,25 @@
   "icon": "icon.png",
   "commands": [
     {
-      "name": "Export HTML fontbook",
+      "name": "HTML fontbook",
       "shortcut": "ctrl shift f",
       "identifier": "html-fontbook-export",
       "script": "html-fontbook-export.js"
     },
     {
-      "name": "Export JSON",
+      "name": "JSON",
       "shortcut": "ctrl shift j",
-      "identifier": "advanced-json-export",
-      "script": "advanced-json-export.js"
+      "identifier": "json-export",
+      "script": "json-export.js"
     },
     {
-      "name": "Export CSS classes",
+      "name": "CSS classes",
       "shortcut": "ctrl shift c",
       "identifier": "css-export",
       "script": "css-export.js"
     },
     {
-      "name": "Export SASS mixins",
+      "name": "SASS mixins",
       "shortcut": "ctrl shift s",
       "identifier": "sass-mixins-export",
       "script": "sass-mixins-export.js"
@@ -31,10 +31,15 @@
   "menu": {
     "title": "Typex (Text style export)",
     "items": [
-      "html-fontbook-export",
-      "advanced-json-export",
-      "css-export",
-      "sass-mixins-export"
+      {
+        "title": "Export",
+        "items": [
+          "html-fontbook-export",
+          "json-export",
+          "css-export",
+          "sass-mixins-export"
+        ]
+      }
     ]
   },
   "version": "1.0.0",

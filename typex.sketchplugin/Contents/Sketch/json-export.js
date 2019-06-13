@@ -91,6 +91,103 @@ var exports =
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/export/export-components.js":
+/*!*****************************************!*\
+  !*** ./src/export/export-components.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ([{
+  type: 'checkbox',
+  id: 'merge',
+  label: 'Merge',
+  value: 'Merge identical styles'
+}, {
+  type: 'multicheckbox',
+  id: 'excludeProps',
+  label: 'Exclude properties',
+  values: ['Color', 'Line height']
+}, {
+  type: 'select',
+  id: 'cssUnit',
+  options: ['px', 'em', 'rem', '%', 'vh', 'vw', 'No unit'],
+  label: 'CSS unit'
+}, {
+  type: 'text',
+  id: 'scalingFactor',
+  value: 1,
+  label: 'Size scaling factor'
+}, {
+  type: 'text',
+  id: 'maxDecimalPlaces',
+  value: 2,
+  label: 'Maximal decimal places'
+}, {
+  type: 'text',
+  id: 'namingPrefix',
+  value: 'type',
+  label: 'Naming prefix'
+}, {
+  type: 'select',
+  id: 'namingConvention',
+  options: ['Numeric', 'Text style name'],
+  label: 'Naming convention'
+}]);
+
+/***/ }),
+
+/***/ "./src/export/open-export-dialog.js":
+/*!******************************************!*\
+  !*** ./src/export/open-export-dialog.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _util_ui__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/ui */ "./src/util/ui.js");
+/* harmony import */ var _util_export__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/export */ "./src/util/export.js");
+/* harmony import */ var _util_sketch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/sketch */ "./src/util/sketch.js");
+/* harmony import */ var _export_components__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./export-components */ "./src/export/export-components.js");
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (function (context, opts, cb) {
+  _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSettingsDialog(context, opts, _export_components__WEBPACK_IMPORTED_MODULE_3__["default"], function (data) {
+    // Defaults
+    data.propertyNamingConvention = data.propertyNamingConvention || 'Numeric';
+    data.cssUnit = data.cssUnit === 'No unit' ? 0 : data.cssUnit; // First store the properties we should exclude
+
+    var excludeProps = [];
+
+    if (data['excludeProps']['Color']) {
+      excludeProps.push('color');
+    }
+
+    if (data['excludeProps']['Line height']) {
+      excludeProps.push('lineHeight');
+    } // Get the text styles from the Sketch document
+
+
+    var textStyles = _util_sketch__WEBPACK_IMPORTED_MODULE_2__["default"].getTextStyles(context);
+    textStyles = _util_export__WEBPACK_IMPORTED_MODULE_1__["default"].sortTextStyles(textStyles);
+    textStyles = _util_export__WEBPACK_IMPORTED_MODULE_1__["default"].excludeTextStyleProperties(textStyles, excludeProps);
+
+    if (data['merge']) {
+      textStyles = _util_export__WEBPACK_IMPORTED_MODULE_1__["default"].removeDoubleTextStyles(textStyles);
+    }
+
+    cb(textStyles, data);
+  });
+});
+;
+
+/***/ }),
+
 /***/ "./src/json-export.js":
 /*!****************************!*\
   !*** ./src/json-export.js ***!
@@ -101,27 +198,27 @@ var exports =
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_ui__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/ui */ "./src/util/ui.js");
-/* harmony import */ var _util_export__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/export */ "./src/util/export.js");
-/* harmony import */ var _util_sketch__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/sketch */ "./src/util/sketch.js");
+/* harmony import */ var _util_string__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/string */ "./src/util/string.js");
+/* harmony import */ var _util_export__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/export */ "./src/util/export.js");
+/* harmony import */ var _export_open_export_dialog__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./export/open-export-dialog */ "./src/export/open-export-dialog.js");
+
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
-  _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSettingsDialog(context, {
+  Object(_export_open_export_dialog__WEBPACK_IMPORTED_MODULE_3__["default"])(context, {
     title: 'JSON export',
-    informativeText: 'Export text styles as a JSON file (in development)',
-    confirmBtnText: 'Export as JSON'
-  }, [], function (data) {
-    // Get the text styles from the Sketch document
-    var textStyles = _util_sketch__WEBPACK_IMPORTED_MODULE_2__["default"].getTextStyles(context);
-    textStyles = _util_export__WEBPACK_IMPORTED_MODULE_1__["default"].sortTextStyles(textStyles);
-    textStyles = _util_export__WEBPACK_IMPORTED_MODULE_1__["default"].removeDoubleTextStyles(textStyles);
-    var css = [];
-    textStyles.forEach(function (textStyle) {
-      css.push(_util_export__WEBPACK_IMPORTED_MODULE_1__["default"].createCssProps(textStyle));
+    informativeText: 'Export text styles in JSON format'
+  }, function (textStyles, data) {
+    // Export as JSON
+    var textStyleJson = {};
+    textStyles.forEach(function (textStyle, i) {
+      var textStyleIdentifier = _util_string__WEBPACK_IMPORTED_MODULE_1__["default"].slugify(textStyle.name);
+      var stylePropertyNaming = data.namingPrefix + '-' + (data.namingConvention === 'Numeric' ? i + 1 : textStyleIdentifier);
+      textStyleJson[stylePropertyNaming] = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].createCssProps(textStyle, data);
     }); // Ask the user to save the file
 
-    _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSavePanel('typex-text-styles.json', JSON.stringify(css));
+    _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSavePanel('typex-text-styles.json', JSON.stringify(textStyleJson));
   });
 });
 ;
@@ -177,7 +274,7 @@ var exportUtils = {
   },
   createCssProps: function createCssProps(textStyle) {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    opts.cssUnit = opts.cssUnit || 'px';
+    opts.cssUnit = opts.cssUnit || 0;
     opts.scalingFactor = opts.scalingFactor || 1;
     opts.maxDecimalPlaces = opts.maxDecimalPlaces || 2;
     var cssProps = {};
@@ -221,7 +318,7 @@ var exportUtils = {
     return cssProps;
   },
   createRgbaString: function createRgbaString(colorObj) {
-    return 'rgba(' + exportUtils.createColorValue(colorObj.r) + ',' + exportUtils.createColorValue(colorObj.g) + ',' + exportUtils.createColorValue(colorObj.b) + ',' + colorObj.a + ')';
+    return 'rgba(' + exportUtils.createColorValue(colorObj.r) + ', ' + exportUtils.createColorValue(colorObj.g) + ', ' + exportUtils.createColorValue(colorObj.b) + ', ' + colorObj.a + ')';
   },
   createColorValue: function createColorValue(normalizedValue) {
     return Math.round(normalizedValue * 255);
@@ -248,20 +345,20 @@ var exportUtils = {
     var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var output = "\n      <!DOCTYPE html>\n      <html lang=\"en\">\n      <head>\n        <meta charset=\"utf-8\">\n        <title>Typex text styles</title>\n      </head>\n      <body style=\"padding: 0; margin: 0;\">\n    ";
     textStyles.forEach(function (textStyle, i) {
-      var textStyleId = _util__WEBPACK_IMPORTED_MODULE_0__["default"].createTextStyleId(textStyle);
       var cssProps = exportUtils.createCssProps(textStyle, opts);
       var inlineStyleString = exportUtils.createInlineStyleString(cssProps);
+      var cssPropsBlock = exportUtils.createStyleBlock(cssProps);
       var textStyleName;
 
-      if (opts.textStyleNamingConvention === 'Numeric') {
-        textStyleName = opts.textStyleNamingPrefix + ' ' + (i + 1);
-      } else if (opts.textStyleNamingConvention === 'Text style name') {
-        textStyleName = opts.textStyleNamingPrefix + ' ' + textStyle.name;
+      if (opts.namingConvention === 'Numeric') {
+        textStyleName = opts.namingPrefix + ' ' + (i + 1);
+      } else if (opts.namingConvention === 'Text style name') {
+        textStyleName = opts.namingPrefix + ' ' + textStyle.name;
       } else {
-        textStyleName = opts.textStyleNamingPrefix + ' ' + (i + 1) + ' (' + textStyle.name + ')';
+        textStyleName = opts.namingPrefix + ' ' + (i + 1) + ' (' + textStyle.name + ')';
       }
 
-      output += "\n        <div style=\"box-shadow: 0 5px 15px #f0f0f0; padding: 25px 50px; border-bottom: 1px solid #ccc;\">\n          <div style=\"font-family: Helvetica, Arial, Sans-Serif; font-size: 14px; margin-bottom: 15px;\">\n            <span>".concat(i + 1, ".</span>\n            <span>\n              ").concat(textStyleName, "\n            </span>\n            <span style=\"color: #ccc;\">\n              ").concat(inlineStyleString, "\n            </span>\n          </div>\n          <div style=\"").concat(inlineStyleString, ";\">").concat(opts.previewText, "</div>\n        </div>\n      ");
+      output += "\n        <div style=\"box-shadow: 0 5px 15px #f0f0f0; padding: 25px 50px; border-bottom: 1px solid #ccc;\">\n          <div style=\"font-family: Helvetica, Arial, Sans-Serif; font-size: 14px; margin-bottom: 15px;\">\n            <span>".concat(i + 1, ".</span>\n            <span>\n              ").concat(textStyleName, "\n            </span>\n          </div>\n          <div style=\"display: flex; justify-content: space-between;\">\n            <div style=\"").concat(inlineStyleString, ";\">\n              The quick brown fox jumps over the lazy dog\n            </div>\n            <div>\n                <textarea cols=\"35\" rows=\"8\" style=\"border: 1px solid #ccc; resize: none;\">").concat(cssPropsBlock, "</textarea>\n            </div>\n          </div>\n        </div>\n      ");
     });
     output += "\n      </body>\n      </html>\n    ";
     return output;
@@ -349,6 +446,41 @@ var sketch = {
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = (sketch);
+
+/***/ }),
+
+/***/ "./src/util/string.js":
+/*!****************************!*\
+  !*** ./src/util/string.js ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+
+var string = {
+  slugify: function slugify(str) {
+    str = str.replace(/^\s+|\s+$/g, ''); // trim
+
+    str = str.toLowerCase(); // remove accents, swap ñ for n, etc
+
+    var from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
+    var to = 'aaaaeeeeiiiioooouuuunc------';
+
+    for (var i = 0, l = from.length; i < l; i++) {
+      str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+    }
+
+    str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+    .replace(/\s+/g, '-') // collapse whitespace and replace by -
+    .replace(/-+/g, '-') // collapse dashes
+    ;
+    return str;
+  }
+};
+/* harmony default export */ __webpack_exports__["default"] = (string);
 
 /***/ }),
 
@@ -451,7 +583,7 @@ var ui = {
 
         case 'checkbox':
           label = ui.createLabel(c.label);
-          field = ui.createCheckbox();
+          field = ui.createCheckbox(c.value);
           height += 22 + rowSpacing;
           gridView.addRowWithViews([label, field]);
           break;
@@ -498,6 +630,7 @@ var ui = {
             break;
 
           case 'checkbox':
+            data[c.id] = inputs[c.id].state() === 1;
             break;
 
           case 'multicheckbox':

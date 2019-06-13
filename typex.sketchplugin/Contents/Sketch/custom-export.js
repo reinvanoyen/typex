@@ -86,52 +86,39 @@ var exports =
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/css-export.js");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/custom-export.js");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/css-export.js":
-/*!***************************!*\
-  !*** ./src/css-export.js ***!
-  \***************************/
+/***/ "./src/custom-export.js":
+/*!******************************!*\
+  !*** ./src/custom-export.js ***!
+  \******************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_ui__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/ui */ "./src/util/ui.js");
-/* harmony import */ var _util_string__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/string */ "./src/util/string.js");
-/* harmony import */ var _util_export__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/export */ "./src/util/export.js");
-/* harmony import */ var _export_open_export_dialog__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./export/open-export-dialog */ "./src/export/open-export-dialog.js");
-
-
+/* harmony import */ var _export_open_export_dialog__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./export/open-export-dialog */ "./src/export/open-export-dialog.js");
 
 
 /* harmony default export */ __webpack_exports__["default"] = (function (context) {
-  Object(_export_open_export_dialog__WEBPACK_IMPORTED_MODULE_3__["default"])(context, {
-    title: 'CSS classes export',
-    informativeText: 'Export each text style as a class'
+  Object(_export_open_export_dialog__WEBPACK_IMPORTED_MODULE_1__["default"])(context, {
+    title: 'Custom script export',
+    informativeText: 'Export each text style by using a custom export script in Javascript'
   }, function (textStyles, data) {
-    var css = {};
-    textStyles.forEach(function (textStyle) {
-      css[_util_string__WEBPACK_IMPORTED_MODULE_1__["default"].slugify(textStyle.name)] = _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].createCssProps(textStyle, data);
+    _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSettingsDialog(context, {
+      title: 'Custom export script',
+      informativeText: 'Customize your export by using Javascript'
+    }, [{
+      type: 'text',
+      id: 'customScript',
+      value: 'console.log(output)',
+      label: 'Custom Javascript export'
+    }], function (customData) {// @TODO
     });
-    var output = '';
-    var i = 0;
-
-    for (var identifier in css) {
-      if (css.hasOwnProperty(identifier)) {
-        var className = data.namingPrefix + '-' + (data.namingConvention === 'Numeric' ? i + 1 : identifier);
-        output += (i !== 0 ? "\n" : '') + '.' + className + "\n";
-        output += '{' + "\n";
-        output += _util_export__WEBPACK_IMPORTED_MODULE_2__["default"].createStyleBlock(css[identifier]);
-        output += '}' + "\n";
-        i++;
-      }
-    }
-
-    _util_ui__WEBPACK_IMPORTED_MODULE_0__["default"].createSavePanel('typex-stylesheet.css', output);
   });
 });
 ;
@@ -459,41 +446,6 @@ var sketch = {
 
 /***/ }),
 
-/***/ "./src/util/string.js":
-/*!****************************!*\
-  !*** ./src/util/string.js ***!
-  \****************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-
-var string = {
-  slugify: function slugify(str) {
-    str = str.replace(/^\s+|\s+$/g, ''); // trim
-
-    str = str.toLowerCase(); // remove accents, swap ñ for n, etc
-
-    var from = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;';
-    var to = 'aaaaeeeeiiiioooouuuunc------';
-
-    for (var i = 0, l = from.length; i < l; i++) {
-      str = str.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
-    }
-
-    str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
-    .replace(/\s+/g, '-') // collapse whitespace and replace by -
-    .replace(/-+/g, '-') // collapse dashes
-    ;
-    return str;
-  }
-};
-/* harmony default export */ __webpack_exports__["default"] = (string);
-
-/***/ }),
-
 /***/ "./src/util/ui.js":
 /*!************************!*\
   !*** ./src/util/ui.js ***!
@@ -706,4 +658,4 @@ var util = {
 }
 that['onRun'] = __skpm_run.bind(this, 'default')
 
-//# sourceMappingURL=css-export.js.map
+//# sourceMappingURL=custom-export.js.map

@@ -5,7 +5,7 @@ import exportUtils from './util/export';
 import openExportDialog from './export/open-export-dialog';
 
 export default function(context) {
-  
+
   openExportDialog(context, {
     title: 'SASS mixins export',
     informativeText: 'Export each text style as a SASS mixin'
