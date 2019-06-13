@@ -1,6 +1,6 @@
 {
   "name": "typex",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Text styles to CSS, SASS mixins, HTML, JSON, ...",
   "repository": {
     "type": "git",
