@@ -86,7 +86,7 @@ const exportUtils = {
     }
 
     if (textStyle.color) {
-      cssProps['color'] = exportUtils.createRgbaString(textStyle.color);
+      cssProps['color'] = exportUtils.createRgbaString(textStyle.textColor);
     }
 
     return cssProps;
