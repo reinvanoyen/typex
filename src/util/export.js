@@ -85,8 +85,8 @@ const exportUtils = {
       cssProps['line-height'] = numberUtils.parseFloatMaxDecimal(1 + (textStyle.lineHeight - textStyle.fontSize) / textStyle.lineHeight, opts.maxDecimalPlaces);
     }
 
-    if (textStyle.color) {
-      cssProps['color'] = exportUtils.createRgbaString(textStyle.textColor);
+    if (textStyle.textColor) {
+      cssProps['color'] = textStyle.textColor;
     }
 
     return cssProps;
