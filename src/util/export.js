@@ -71,7 +71,7 @@ const exportUtils = {
     }
 
     cssProps['font-size'] = numberUtils.parseFloatMaxDecimal(opts.scalingFactor * textStyle.fontSize, opts.maxDecimalPlaces)+opts.cssUnit;
-    cssProps['letter-spacing'] = numberUtils.parseFloatMaxDecimal(opts.scalingFactor * textStyle.letterSpacing, opts.maxDecimalPlaces)+opts.cssUnit;
+    cssProps['letter-spacing'] = numberUtils.parseFloatMaxDecimal(opts.scalingFactor * textStyle.kerning, opts.maxDecimalPlaces)+opts.cssUnit;
 
     if (textStyle.textTransform === 1) {
       cssProps['text-transform'] = 'uppercase';
